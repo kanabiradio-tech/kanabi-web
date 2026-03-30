@@ -21,13 +21,14 @@ export default async function HomePage() {
       .limit(3);
 
     if (error) {
-      console.error("Supabase query error:", error);
+      console.error("Supabase query error:", JSON.stringify({ message: error.message, details: error.details, hint: error.hint, code: error.code }, null, 2));
       latestPosts = fallbackPosts;
     } else {
+      console.log(`Supabase query OK: returned ${data?.length ?? 0} posts`);
       latestPosts = data;
     }
   } catch (err) {
-    console.error("Supabase fetch failed, using fallback data:", err);
+    console.error("Supabase fetch failed:", err instanceof Error ? JSON.stringify({ message: err.message, stack: err.stack }, null, 2) : err);
     latestPosts = fallbackPosts;
   }
   return (
