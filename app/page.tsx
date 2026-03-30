@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { supabase } from "@/src/lib/supabase";
