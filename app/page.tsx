@@ -17,7 +17,7 @@ export default async function HomePage() {
       .from("posts")
       .select("id, title, series, voice, word_count")
       .eq("status", "published")
-      .order("published_at", { ascending: false })
+      .order("created_at", { ascending: false })
       .limit(3);
 
     if (error) {
