@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx next:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsx:*)",
+      "Bash(curl:*)",
+      "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 npx tsx scripts/import_posts.ts 2>&1)",
+      "Bash(python3 -m json.tool)",
+      "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 npx tsx scripts/fix_titles.ts)",
+      "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 npx next build)"
+    ]
+  }
+}
