@@ -2,18 +2,32 @@
 import Link from "next/link";
 import { supabase } from "@/src/lib/supabase";
 
-export default async function HomePage() {
-  const { data: latestPosts, error } = await supabase
-    .from("posts")
-    .select("id, title, series, voice, word_count")
-    .eq("status", "published")
-    .order("published_at", { ascending: false })
-    .limit(3);
+const fallbackPosts = [
+  { id: "fallback-1", title: "燼光之城：黎明前的最後一夜", series: "燼光宇宙", voice: "陸沉淵", word_count: 3200 },
+  { id: "fallback-2", title: "台北地下鐵的幽靈列車", series: "暗黑宇宙", voice: "簡瑞麒", word_count: 2800 },
+  { id: "fallback-3", title: "許願便利商店：第四個願望", series: "燼光宇宙", voice: "林宗佑", word_count: 4100 },
+];
 
-  if (error) {
-    console.error("Supabase query error:", error);
+export default async function HomePage() {
+  let latestPosts;
+  try {
+    const { data, error } = await supabase
+      .from("posts")
+      .select("id, title, series, voice, word_count")
+      .eq("status", "published")
+      .order("published_at", { ascending: false })
+      .limit(3);
+
+    if (error) {
+      console.error("Supabase query error:", error);
+      latestPosts = fallbackPosts;
+    } else {
+      latestPosts = data;
+    }
+  } catch (err) {
+    console.error("Supabase fetch failed, using fallback data:", err);
+    latestPosts = fallbackPosts;
   }
-  console.log("latestPosts:", latestPosts);
   return (
     <>
       {/* Reading Progress Indicator */}
