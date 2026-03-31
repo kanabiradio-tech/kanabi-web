@@ -129,7 +129,10 @@ export default async function HomePage() {
             {latestPosts && latestPosts.length > 0 ? (
               <>
                 {/* Main Feature */}
-                <article className="md:col-span-8 bg-surface-container-low rounded-lg p-1 group cursor-pointer">
+                <Link
+                  href={`/posts/${latestPosts[0].id}`}
+                  className="md:col-span-8 bg-surface-container-low rounded-lg p-1 group cursor-pointer no-underline"
+                >
                   <div className="p-8">
                     <div className="flex items-center gap-3 mb-4">
                       <span className="font-label text-[10px] font-bold uppercase tracking-widest bg-primary-container text-on-primary px-2 py-1 rounded">
@@ -146,13 +149,14 @@ export default async function HomePage() {
                       聲線：{latestPosts[0].voice}
                     </p>
                   </div>
-                </article>
+                </Link>
 
                 {/* Side Features */}
                 {latestPosts.slice(1).map((post) => (
-                  <article
+                  <Link
                     key={post.id}
-                    className="md:col-span-4 bg-surface-container-low rounded-lg p-6 group cursor-pointer flex flex-col justify-between border border-transparent hover:bg-surface-container-high transition-colors"
+                    href={`/posts/${post.id}`}
+                    className="md:col-span-4 bg-surface-container-low rounded-lg p-6 group cursor-pointer flex flex-col justify-between border border-transparent hover:bg-surface-container-high transition-colors no-underline"
                   >
                     <div>
                       <span className="font-label text-[10px] font-bold uppercase tracking-widest text-on-primary-fixed-variant block mb-4">
@@ -168,7 +172,7 @@ export default async function HomePage() {
                         {post.word_count?.toLocaleString()} 字
                       </p>
                     </div>
-                  </article>
+                  </Link>
                 ))}
               </>
             ) : (

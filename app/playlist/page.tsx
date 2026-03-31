@@ -136,7 +136,7 @@ export default async function PlaylistPage() {
                       </span>
                     </button>
                   </div>
-                  <div className="flex-1">
+                  <Link href={`/posts/${post.id}`} className="flex-1 no-underline">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="font-label text-[10px] font-bold tracking-tighter uppercase text-primary-container bg-primary-fixed px-2 py-0.5 rounded-full">
                         {post.series}
@@ -145,13 +145,13 @@ export default async function PlaylistPage() {
                         &bull; {post.word_count?.toLocaleString()} 字
                       </span>
                     </div>
-                    <h3 className="text-2xl font-headline text-on-surface mb-1">
+                    <h3 className="text-2xl font-headline text-on-surface mb-1 group-hover:text-primary transition-colors">
                       {post.title}
                     </h3>
                     <p className="text-on-surface-variant text-sm">
                       聲線：{post.voice}
                     </p>
-                  </div>
+                  </Link>
                 </div>
               ))
             ) : (
