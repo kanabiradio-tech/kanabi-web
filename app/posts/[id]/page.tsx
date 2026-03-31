@@ -5,8 +5,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { supabase } from "@/src/lib/supabase";
 import { SERIES_META } from "@/src/lib/series-meta";
-import AddToQueueButton from "@/src/components/AddToQueueButton";
-import InlineAudioPlayer from "@/src/components/InlineAudioPlayer";
+import PostContent from "@/src/components/PostContent";
 
 interface PostPageProps {
   params: Promise<{ id: string }>;
@@ -104,10 +103,15 @@ export default async function PostPage({ params }: PostPageProps) {
       <main className="max-w-3xl mx-auto px-8 py-12 pb-32">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-on-surface-variant font-label text-sm mb-8">
-          <Link href="/" className="hover:text-primary transition-colors no-underline">
+          <Link
+            href="/"
+            className="hover:text-primary transition-colors no-underline"
+          >
             首頁
           </Link>
-          <span className="material-symbols-outlined text-sm">chevron_right</span>
+          <span className="material-symbols-outlined text-sm">
+            chevron_right
+          </span>
           <Link
             href={`/series/${encodeURIComponent(post.series)}`}
             className="hover:text-primary transition-colors no-underline"
@@ -125,7 +129,7 @@ export default async function PostPage({ params }: PostPageProps) {
         </div>
 
         {/* Article header */}
-        <header className="mb-10">
+        <header className="mb-6">
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <Link
               href={`/series/${encodeURIComponent(post.series)}`}
@@ -183,52 +187,10 @@ export default async function PostPage({ params }: PostPageProps) {
               </span>
             )}
           </div>
-
-          {/* Audio player + queue button */}
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <InlineAudioPlayer audioUrl={post.audio_url} />
-            <AddToQueueButton
-              item={{
-                id: post.id,
-                title: post.title,
-                series: post.series,
-                voice: post.voice,
-                audio_url: post.audio_url,
-                word_count: post.word_count,
-              }}
-            />
-          </div>
         </header>
 
-        {/* Article content */}
-        <article className="font-serif text-on-surface text-lg leading-relaxed space-y-6">
-          {post.content ? (
-            post.content.split("\n").map((paragraph: string, i: number) => {
-              const trimmed = paragraph.trim();
-              if (!trimmed) return null;
-              if (trimmed.startsWith("# ")) return null;
-              if (trimmed === "---") {
-                return (
-                  <div
-                    key={i}
-                    className="my-10 flex justify-center gap-2 text-outline-variant"
-                  >
-                    <span>*</span>
-                    <span>*</span>
-                    <span>*</span>
-                  </div>
-                );
-              }
-              return (
-                <p key={i} className="text-justify">
-                  {trimmed}
-                </p>
-              );
-            })
-          ) : (
-            <p className="text-on-surface-variant italic">此文章尚無內容。</p>
-          )}
-        </article>
+        {/* Mode toggle + content (client component) */}
+        <PostContent post={post} />
 
         {/* Prev / Next navigation */}
         <div className="mt-16 pt-8 border-t border-outline-variant/30 grid grid-cols-2 gap-4">

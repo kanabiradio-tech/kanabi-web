@@ -164,15 +164,24 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
 
                   {/* Actions */}
                   <div className="flex items-center gap-2 flex-none">
-                    {post.audio_url ? (
-                      <span className="material-symbols-outlined text-primary text-lg">
-                        headphones
-                      </span>
-                    ) : (
-                      <span className="font-label text-[10px] text-on-surface-variant bg-surface-container-highest px-2 py-1 rounded">
-                        音訊合成中
-                      </span>
-                    )}
+                    <Link
+                      href={`/posts/${post.id}`}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary text-on-primary font-label text-xs font-semibold no-underline hover:opacity-90 transition-all"
+                    >
+                      <span className="material-symbols-outlined text-sm">menu_book</span>
+                      閱讀
+                    </Link>
+                    <Link
+                      href={`/posts/${post.id}#listen`}
+                      className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full font-label text-xs font-semibold no-underline transition-all ${
+                        post.audio_url
+                          ? "bg-surface-container-highest text-primary hover:bg-surface-container-high"
+                          : "bg-surface-container-highest text-on-surface-variant/50 cursor-default"
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-sm">headphones</span>
+                      {post.audio_url ? "收聽" : "合成中"}
+                    </Link>
                     <AddToQueueButton
                       variant="icon"
                       item={{

@@ -179,9 +179,25 @@ export default async function HomePage() {
                         {latestPosts[0].title}
                       </h3>
                     </Link>
-                    <p className="text-on-surface-variant">
+                    <p className="text-on-surface-variant mb-5">
                       聲線：{latestPosts[0].voice}
                     </p>
+                    <div className="flex items-center gap-3">
+                      <Link
+                        href={`/posts/${latestPosts[0].id}`}
+                        className="inline-flex items-center gap-2 bg-primary text-on-primary px-5 py-2.5 rounded-full font-label text-sm font-semibold no-underline hover:opacity-90 transition-all"
+                      >
+                        <span className="material-symbols-outlined text-lg">menu_book</span>
+                        閱讀
+                      </Link>
+                      <Link
+                        href={`/posts/${latestPosts[0].id}#listen`}
+                        className="inline-flex items-center gap-2 bg-surface-container-high text-primary px-5 py-2.5 rounded-full font-label text-sm font-semibold no-underline hover:bg-surface-container-highest transition-all"
+                      >
+                        <span className="material-symbols-outlined text-lg">headphones</span>
+                        收聽
+                      </Link>
+                    </div>
                   </div>
                 </article>
 
@@ -206,16 +222,29 @@ export default async function HomePage() {
                         )}
                       </div>
                       <Link href={`/posts/${post.id}`} className="no-underline">
-                        <h3 className="text-xl font-headline text-primary mb-4 leading-snug group-hover:underline decoration-primary/30 underline-offset-4 cursor-pointer">
+                        <h3 className="text-xl font-headline text-primary mb-3 leading-snug group-hover:underline decoration-primary/30 underline-offset-4 cursor-pointer">
                           {post.title}
                         </h3>
                       </Link>
-                      <p className="text-on-surface-variant text-sm mb-2">
-                        聲線：{post.voice}
+                      <p className="text-on-surface-variant text-sm mb-4">
+                        {post.voice} · {post.word_count?.toLocaleString()} 字
                       </p>
-                      <p className="font-label text-xs text-on-surface-variant">
-                        {post.word_count?.toLocaleString()} 字
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href={`/posts/${post.id}`}
+                          className="inline-flex items-center gap-1.5 bg-primary text-on-primary px-3.5 py-1.5 rounded-full font-label text-xs font-semibold no-underline hover:opacity-90 transition-all"
+                        >
+                          <span className="material-symbols-outlined text-sm">menu_book</span>
+                          閱讀
+                        </Link>
+                        <Link
+                          href={`/posts/${post.id}#listen`}
+                          className="inline-flex items-center gap-1.5 bg-surface-container-highest text-on-surface-variant px-3.5 py-1.5 rounded-full font-label text-xs font-semibold no-underline hover:text-primary transition-all"
+                        >
+                          <span className="material-symbols-outlined text-sm">headphones</span>
+                          收聽
+                        </Link>
+                      </div>
                     </div>
                   </article>
                 ))}
