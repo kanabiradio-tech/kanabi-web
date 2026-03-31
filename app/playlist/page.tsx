@@ -1,50 +1,57 @@
-/* eslint-disable @next/next/no-img-element */
-export const dynamic = "force-dynamic";
+"use client";
 
 import Link from "next/link";
-import type { Metadata } from "next";
-import { supabase } from "@/src/lib/supabase";
+import { useQueue } from "@/src/components/QueueProvider";
+import { useCallback } from "react";
 
-export const metadata: Metadata = {
-  title: "我的播放清單 - kanabi.live",
-};
+export default function PlaylistPage() {
+  const {
+    items,
+    currentIndex,
+    isPlaying,
+    removeFromQueue,
+    clearQueue,
+    reorder,
+    play,
+    toggle,
+  } = useQueue();
 
-export default async function PlaylistPage() {
-  const { data: posts, error } = await supabase
-    .from("posts")
-    .select("id, title, series, voice, word_count")
-    .eq("status", "published")
-    .order("created_at", { ascending: false })
-    .limit(10);
-
-  if (error) {
-    console.error("Supabase playlist query error:", JSON.stringify(error, null, 2));
-  }
-
-  const totalWords = posts?.reduce((sum, p) => sum + (p.word_count ?? 0), 0) ?? 0;
+  const totalWords = items.reduce((sum, p) => sum + (p.word_count ?? 0), 0);
   const estimatedMinutes = Math.ceil(totalWords / 500);
+
+  // Simple drag & drop via index swap
+  const handleMoveUp = useCallback(
+    (idx: number) => {
+      if (idx > 0) reorder(idx, idx - 1);
+    },
+    [reorder]
+  );
+
+  const handleMoveDown = useCallback(
+    (idx: number) => {
+      if (idx < items.length - 1) reorder(idx, idx + 1);
+    },
+    [reorder, items.length]
+  );
 
   return (
     <>
       {/* TopNavBar */}
       <header className="w-full top-0 sticky z-40 bg-surface transition-colors duration-300">
         <nav className="flex justify-between items-center px-8 py-4 max-w-screen-2xl mx-auto">
-          <div className="text-2xl font-serif italic text-primary">
+          <Link
+            href="/"
+            className="text-2xl font-serif italic text-primary no-underline"
+          >
             kanabi.live
-          </div>
+          </Link>
           <div className="hidden md:flex items-center gap-8">
             <Link
-              className="text-[#5c5957] hover:text-primary transition-colors font-label text-[0.75rem] font-medium tracking-tight uppercase"
+              className="text-[#5c5957] hover:text-primary transition-colors font-label text-[0.75rem] font-medium tracking-tight uppercase no-underline"
               href="/"
             >
               首頁
             </Link>
-            <a
-              className="text-[#5c5957] hover:text-primary transition-colors font-label text-[0.75rem] font-medium tracking-tight uppercase"
-              href="#"
-            >
-              探索
-            </a>
             <a
               className="text-primary border-b-2 border-primary-container pb-1 font-label text-[0.75rem] font-medium tracking-tight uppercase"
               href="#"
@@ -53,127 +60,212 @@ export default async function PlaylistPage() {
             </a>
           </div>
           <div className="flex items-center gap-4">
-            <div className="hidden sm:block">
-              <span className="material-symbols-outlined text-on-surface-variant">
-                search
-              </span>
-            </div>
-            <img
-              alt="使用者大頭照"
-              className="w-8 h-8 rounded-full border border-outline-variant/20"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLxILvH6XULKWC2uccNJkiHkBI2L2PlCiFQnj7r7JmwpZl56pcVCHt_Ky2IjGSaJlkzHKQXLjLKrIYUTU1m_aeB6k_FG-6qJEE2jsQ-hnTB_YPSh2ICJR_I9Ov6H4Y8ev3B-yAhu1xUCefbCqGkCNMGBYnR4wbM3w8YDQrugkA3fQcRXTI_llAO3txOOPgSe8dn0iut-HJXyhzAeAmoO3cF8oFTH7JWUFjJ3gEYvpKIdy07TsnJszT0h5qx4HwL0ooYan46SyiYKc"
-            />
+            <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">
+              search
+            </button>
           </div>
         </nav>
       </header>
 
-      <main className="max-w-7xl mx-auto px-8 py-12">
-        {/* Header Section */}
+      <main className="max-w-5xl mx-auto px-8 py-12 pb-32">
+        {/* Header */}
         <section className="mb-12">
           <span className="font-label text-[0.75rem] font-semibold tracking-widest text-primary uppercase mb-2 block">
             個人手札
           </span>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <h1 className="text-6xl md:text-7xl font-headline text-primary mb-4 leading-tight">
+              <h1 className="text-5xl md:text-6xl font-headline text-primary mb-4 leading-tight">
                 我的播放清單
               </h1>
-              <p className="text-on-surface-variant text-lg max-w-xl font-body">
+              <p className="text-on-surface-variant text-lg font-body">
                 你的每日晨讀，照你的順序播。
               </p>
             </div>
-            <div className="flex flex-wrap gap-4">
-              <Link
-                href="/"
-                className="bg-primary text-on-primary px-6 py-3 rounded-full font-label text-sm font-semibold flex items-center gap-2 hover:opacity-90 transition-all shadow-md no-underline"
-              >
-                <span className="material-symbols-outlined text-lg">
-                  play_arrow
-                </span>
-                繼續播放喜好清單
-              </Link>
-              <button className="bg-surface-container-high text-primary px-6 py-3 rounded-full font-label text-sm font-semibold flex items-center gap-2 hover:bg-surface-container-highest transition-all">
-                <span className="material-symbols-outlined text-lg">add</span>
-                建立新清單
-              </button>
+            <div className="flex flex-wrap gap-3">
+              {items.length > 0 && (
+                <>
+                  <button
+                    onClick={() => play(0)}
+                    className="bg-primary text-on-primary px-6 py-3 rounded-full font-label text-sm font-semibold flex items-center gap-2 hover:opacity-90 transition-all shadow-md"
+                  >
+                    <span className="material-symbols-outlined text-lg">
+                      play_arrow
+                    </span>
+                    從頭播放
+                  </button>
+                  <button
+                    onClick={clearQueue}
+                    className="bg-surface-container-high text-on-surface-variant px-6 py-3 rounded-full font-label text-sm font-semibold flex items-center gap-2 hover:bg-surface-container-highest transition-all"
+                  >
+                    <span className="material-symbols-outlined text-lg">
+                      delete_sweep
+                    </span>
+                    清空
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          {/* Playlist Content */}
-          <div className="lg:col-span-8 space-y-6">
-            <div className="flex justify-between items-end border-b border-outline-variant pb-4 mb-8">
-              <h2 className="text-3xl font-headline text-primary">
-                當前播放列表
+          {/* Queue items */}
+          <div className="lg:col-span-8 space-y-3">
+            <div className="flex justify-between items-end border-b border-outline-variant pb-4 mb-6">
+              <h2 className="text-2xl font-headline text-primary">
+                播放列表
               </h2>
               <span className="font-label text-sm text-on-surface-variant font-medium">
-                總計 {posts?.length ?? 0} 項目 &bull; 約 {estimatedMinutes} 分鐘
+                {items.length} 項目 · 約 {estimatedMinutes} 分鐘
               </span>
             </div>
 
-            {posts && posts.length > 0 ? (
-              posts.map((post) => (
-                <div
-                  key={post.id}
-                  className="group bg-surface-container-low p-6 rounded-lg flex gap-6 items-center transition-all hover:shadow-md border border-transparent hover:border-outline-variant/30"
-                >
-                  <div className="flex flex-col gap-2">
-                    <button
-                      className="cursor-grab active:cursor-grabbing text-outline-variant hover:text-primary transition-colors"
-                      title="重新排序"
-                    >
-                      <span className="material-symbols-outlined">
-                        drag_indicator
-                      </span>
-                    </button>
-                    <button
-                      className="text-outline-variant hover:text-error transition-colors"
-                      title="移除"
-                    >
-                      <span className="material-symbols-outlined text-lg">
-                        remove_circle
-                      </span>
-                    </button>
-                  </div>
-                  <Link href={`/posts/${post.id}`} className="flex-1 no-underline">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-label text-[10px] font-bold tracking-tighter uppercase text-primary-container bg-primary-fixed px-2 py-0.5 rounded-full">
-                        {post.series}
-                      </span>
-                      <span className="font-label text-[11px] text-on-surface-variant">
-                        &bull; {post.word_count?.toLocaleString()} 字
-                      </span>
+            {items.length > 0 ? (
+              items.map((item, idx) => {
+                const isCurrent = idx === currentIndex;
+                return (
+                  <div
+                    key={item.id}
+                    className={`group flex items-center gap-4 p-5 rounded-lg transition-all ${
+                      isCurrent
+                        ? "bg-primary-container/20 border border-primary/20"
+                        : "bg-surface-container-low hover:bg-surface-container-high border border-transparent"
+                    }`}
+                  >
+                    {/* Reorder controls */}
+                    <div className="flex flex-col gap-1 flex-none">
+                      <button
+                        onClick={() => handleMoveUp(idx)}
+                        className="text-outline-variant hover:text-primary transition-colors disabled:opacity-30"
+                        disabled={idx === 0}
+                      >
+                        <span className="material-symbols-outlined text-sm">
+                          keyboard_arrow_up
+                        </span>
+                      </button>
+                      <button
+                        onClick={() => handleMoveDown(idx)}
+                        className="text-outline-variant hover:text-primary transition-colors disabled:opacity-30"
+                        disabled={idx === items.length - 1}
+                      >
+                        <span className="material-symbols-outlined text-sm">
+                          keyboard_arrow_down
+                        </span>
+                      </button>
                     </div>
-                    <h3 className="text-2xl font-headline text-on-surface mb-1 group-hover:text-primary transition-colors">
-                      {post.title}
-                    </h3>
-                    <p className="text-on-surface-variant text-sm">
-                      聲線：{post.voice}
-                    </p>
-                  </Link>
-                </div>
-              ))
+
+                    {/* Track number / playing indicator */}
+                    <span className="flex-none w-8 text-center font-label text-sm text-on-surface-variant font-semibold">
+                      {isCurrent && isPlaying ? (
+                        <span className="material-symbols-outlined text-primary text-lg">
+                          graphic_eq
+                        </span>
+                      ) : (
+                        idx + 1
+                      )}
+                    </span>
+
+                    {/* Info */}
+                    <button
+                      onClick={() => play(idx)}
+                      className="flex-1 min-w-0 text-left"
+                    >
+                      <h3
+                        className={`text-lg font-headline mb-0.5 truncate ${
+                          isCurrent ? "text-primary" : "text-on-surface"
+                        }`}
+                      >
+                        {item.title}
+                      </h3>
+                      <p className="text-on-surface-variant text-sm font-label truncate">
+                        {item.series}
+                        {item.voice && ` · ${item.voice}`}
+                        {item.word_count &&
+                          ` · ${item.word_count.toLocaleString()} 字`}
+                      </p>
+                    </button>
+
+                    {/* Play + Remove */}
+                    <div className="flex items-center gap-2 flex-none">
+                      <button
+                        onClick={() => {
+                          if (isCurrent) toggle();
+                          else play(idx);
+                        }}
+                        className="p-2 text-primary hover:bg-surface-container-highest rounded-full transition-all"
+                      >
+                        <span
+                          className="material-symbols-outlined"
+                          style={{ fontVariationSettings: "'FILL' 1" }}
+                        >
+                          {isCurrent && isPlaying
+                            ? "pause_circle"
+                            : "play_circle"}
+                        </span>
+                      </button>
+                      <button
+                        onClick={() => removeFromQueue(item.id)}
+                        className="p-2 text-outline-variant hover:text-error rounded-full transition-colors"
+                        title="移除"
+                      >
+                        <span className="material-symbols-outlined text-lg">
+                          close
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
             ) : (
-              <p className="text-on-surface-variant py-12 text-center">
-                目前沒有已發佈的文章。
-              </p>
+              <div className="text-center py-20">
+                <span className="material-symbols-outlined text-5xl text-outline-variant mb-4 block">
+                  queue_music
+                </span>
+                <p className="text-on-surface-variant text-lg mb-2">
+                  播放清單是空的
+                </p>
+                <p className="text-on-surface-variant text-sm mb-6">
+                  到系列頁或文章頁點「加入播放清單」
+                </p>
+                <Link
+                  href="/"
+                  className="inline-flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-full font-label text-sm font-semibold no-underline hover:opacity-90 transition-all"
+                >
+                  <span className="material-symbols-outlined text-lg">
+                    explore
+                  </span>
+                  探索小說
+                </Link>
+              </div>
             )}
           </div>
 
           {/* Sidebar */}
           <div className="lg:col-span-4">
             <div className="sticky top-24 space-y-8">
-              {/* Stats Bento */}
               <div className="bg-primary text-on-primary p-6 rounded-xl shadow-lg relative overflow-hidden">
                 <div className="absolute -right-8 -top-8 w-32 h-32 bg-primary-container rounded-full opacity-30" />
                 <h3 className="font-label text-[10px] font-bold uppercase tracking-widest text-primary-fixed mb-4 relative z-10">
                   播放統計
                 </h3>
-                <div className="space-y-4 relative z-10">
-                  <p className="font-headline text-lg italic leading-snug">
-                    「共 {posts?.length ?? 0} 篇・{totalWords.toLocaleString()} 字・約 {estimatedMinutes} 分鐘」
-                  </p>
+                <div className="space-y-3 relative z-10">
+                  <div className="flex justify-between font-label text-sm">
+                    <span>項目</span>
+                    <span className="font-semibold">{items.length} 篇</span>
+                  </div>
+                  <div className="flex justify-between font-label text-sm">
+                    <span>總字數</span>
+                    <span className="font-semibold">
+                      {totalWords.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between font-label text-sm">
+                    <span>預估時間</span>
+                    <span className="font-semibold">
+                      約 {estimatedMinutes} 分鐘
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -182,66 +274,16 @@ export default async function PlaylistPage() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-12 px-8 bg-surface-container-low mt-24 mb-20">
+      <footer className="w-full py-12 px-8 bg-surface-container-low">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto">
           <div className="font-serif text-lg text-primary-container">
             kanabi.live
-          </div>
-          <div className="flex gap-8">
-            <a
-              className="text-[#5c5957] hover:text-primary transition-all font-label text-xs"
-              href="#"
-            >
-              隱私政策
-            </a>
-            <a
-              className="text-[#5c5957] hover:text-primary transition-all font-label text-xs"
-              href="#"
-            >
-              使用條款
-            </a>
-            <a
-              className="text-[#5c5957] hover:text-primary transition-all font-label text-xs"
-              href="#"
-            >
-              編輯方針
-            </a>
           </div>
           <p className="text-[#5c5957] font-label text-xs italic">
             © 2026 Kelu AI 內容工廠
           </p>
         </div>
       </footer>
-
-      {/* Bottom Player Control Bar */}
-      <nav className="fixed bottom-0 left-0 w-full h-20 flex justify-around items-center px-6 pb-safe bg-surface/80 backdrop-blur-md z-50 border-t border-outline-variant/30">
-        <button className="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-all">
-          <span className="material-symbols-outlined">slow_motion_video</span>
-          <span className="font-label text-[10px] font-semibold">倍速</span>
-        </button>
-        <button className="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-all">
-          <span className="material-symbols-outlined">replay_10</span>
-          <span className="font-label text-[10px] font-semibold">後退</span>
-        </button>
-        <button className="flex flex-col items-center gap-1 text-primary scale-125">
-          <span
-            className="material-symbols-outlined text-4xl"
-            style={{ fontVariationSettings: "'FILL' 1" }}
-          >
-            play_circle
-          </span>
-        </button>
-        <button className="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-all">
-          <span className="material-symbols-outlined">forward_30</span>
-          <span className="font-label text-[10px] font-semibold">前進</span>
-        </button>
-        <button className="flex flex-col items-center gap-1 text-primary">
-          <span className="material-symbols-outlined">queue_music</span>
-          <span className="font-label text-[10px] font-semibold">
-            播放隊列
-          </span>
-        </button>
-      </nav>
     </>
   );
 }

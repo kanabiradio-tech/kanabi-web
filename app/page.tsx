@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { supabase } from "@/src/lib/supabase";
+import { SERIES_META } from "@/src/lib/series-meta";
 
 const fallbackPosts = [
   { id: "fallback-1", title: "燼光之城：黎明前的最後一夜", series: "燼光宇宙", voice: "陸沉淵", word_count: 3200 },
@@ -31,6 +32,29 @@ export default async function HomePage() {
     console.error("Supabase fetch failed:", err instanceof Error ? JSON.stringify({ message: err.message, stack: err.stack }, null, 2) : err);
     latestPosts = fallbackPosts;
   }
+
+  // Fetch series bookshelf data
+  let seriesShelf: { series: string; voice: string | null; latest_episode: string | null; count: number }[] = [];
+  try {
+    const { data: allPosts } = await supabase
+      .from("posts")
+      .select("series, voice, episode")
+      .eq("status", "published")
+      .order("episode", { ascending: false });
+
+    if (allPosts) {
+      const seriesMap = new Map<string, { voice: string | null; latest_episode: string | null; count: number }>();
+      for (const p of allPosts) {
+        if (!seriesMap.has(p.series)) {
+          seriesMap.set(p.series, { voice: p.voice, latest_episode: p.episode, count: 1 });
+        } else {
+          seriesMap.get(p.series)!.count++;
+        }
+      }
+      seriesShelf = Array.from(seriesMap.entries()).map(([series, info]) => ({ series, ...info }));
+    }
+  } catch {}
+
   return (
     <>
       {/* Reading Progress Indicator */}
@@ -183,123 +207,39 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Top Novels (Horizontal Scroll) */}
+        {/* Top Novels (Horizontal Scroll — from Supabase) */}
         <section className="bg-surface-container-low py-24 mb-32 overflow-hidden">
           <div className="px-8 max-w-screen-2xl mx-auto mb-12 flex justify-between items-center">
             <h2 className="text-3xl font-headline text-primary">熱門小說</h2>
-            <div className="flex gap-2">
-              <button className="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center text-primary hover:bg-surface-container-high transition-all">
-                <span className="material-symbols-outlined">chevron_left</span>
-              </button>
-              <button className="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center text-primary hover:bg-surface-container-high transition-all">
-                <span className="material-symbols-outlined">
-                  chevron_right
-                </span>
-              </button>
-            </div>
           </div>
           <div className="flex gap-8 px-8 overflow-x-auto pb-4 snap-x">
-            {/* Novel Card 1 */}
-            <div className="flex-none w-64 snap-start group">
-              <div className="aspect-[2/3] bg-surface-container-highest rounded-lg mb-4 overflow-hidden shadow-sm group-hover:-translate-y-2 transition-transform duration-300">
-                <img
-                  alt="Novel Cover"
-                  className="w-full h-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAe6JqcS-9jZSZFXpZNNJAl9UpTWIyKT623gA_qbWgZHDjtYi45cv_WFQqmoReN7nLsEVDZZN_Nn05GtmGi8aybSqCE1D1ApQi4Mn68Imib_deFgZHeOSmEQsnsNwCcuugDC1Tuu76r7W7QBk41loqaVlnHxWS6N6jco4ELDAnf8iRkDAh_CsC5Bl2x-pc2c7rWm41z4FKakJkiZ1SY1As1igsHhwuRXrT16NGU90LLx0jauKg-upt-amS8W1b60Ukm0NX2SAusoHY"
-                />
-              </div>
-              <h4 className="font-headline text-lg text-primary mb-1">
-                燼光 CINERIS
-              </h4>
-              <p className="font-label text-xs font-semibold text-on-surface-variant uppercase tracking-tighter">
-                陸沉淵
-              </p>
-            </div>
-
-            {/* Novel Card 2 */}
-            <div className="flex-none w-64 snap-start group">
-              <div className="aspect-[2/3] bg-surface-container-highest rounded-lg mb-4 overflow-hidden shadow-sm group-hover:-translate-y-2 transition-transform duration-300">
-                <img
-                  alt="Novel Cover"
-                  className="w-full h-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfYhcNRA_qFdfsZW6pRcLUXJLXAaBZDLK22HFHVN9oAR9L2YXm84IAA3VBBet6K2zmJpzuhSBcDHSHWknqWMA2OVgBPdUn0D9MnxDffl1D9uQUl5oDOd2hKvkASp8w31X8TXF7DN3Jpb1-Aju4AAe9LkEc6l2VYNJXNkYA2dKTx9No5KfrlIglNvcl7Z2h-9uMhYiPEqRhp0lWfKWOXSja7LQMRwDnhOQWREuxW24nxX5q05oTqLylMCrFrv9kWLNnydm342tjzRU"
-                />
-              </div>
-              <h4 className="font-headline text-lg text-primary mb-1">
-                斬斷星辰
-              </h4>
-              <p className="font-label text-xs font-semibold text-on-surface-variant uppercase tracking-tighter">
-                林宗佑
-              </p>
-            </div>
-
-            {/* Novel Card 3 */}
-            <div className="flex-none w-64 snap-start group">
-              <div className="aspect-[2/3] bg-surface-container-highest rounded-lg mb-4 overflow-hidden shadow-sm group-hover:-translate-y-2 transition-transform duration-300">
-                <img
-                  alt="Novel Cover"
-                  className="w-full h-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2dvjtWoooNgHxjHM-3QLIb1ROQzoNmUJjz6ceC9koYoTwAaM0tdNj-HJTSvshe-YmnDyIoZplYk3hVMj40HXagbBmCQpNhbYebh8v9gmbs0GNH7XQBEXhJVgrpaA0J9iLobk2IjD2ct9VIX6jQhT1Rqxm97ddFJ9oyqYp6mO5kx41zZzui_J4tYHbgKADyU4Xc5H5kKCfs1RHumf0CHKObgQqyJPaBSdNDbAbj8liYMyly1dnragcZEdtVGcXbM7O6nUiJmWxQyA"
-                />
-              </div>
-              <h4 className="font-headline text-lg text-primary mb-1">
-                台北冥影
-              </h4>
-              <p className="font-label text-xs font-semibold text-on-surface-variant uppercase tracking-tighter">
-                簡瑞麒
-              </p>
-            </div>
-
-            {/* Novel Card 4 */}
-            <div className="flex-none w-64 snap-start group">
-              <div className="aspect-[2/3] bg-surface-container-highest rounded-lg mb-4 overflow-hidden shadow-sm group-hover:-translate-y-2 transition-transform duration-300">
-                <img
-                  alt="Novel Cover"
-                  className="w-full h-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2uc0RPmOOmL-3Bycid5k8m5c07-AQG4H9nOdvvaJyvKXDhAFfAwnh0Il5b8FTIb7JXhqjArq7MY0qVCWdqkDJZ0gzYHXGFboX7es0bbc9vZIy8Cp5OI7IYRcC6M-HYR3zzeRH1vGBhMc43GLx8dVi6MwtXyfDMrvgqlRxjlu3Lvq0TisdtwIYYOSloSfU02pPH6HwBsOgTpusutQ8G70EZDBsORVeGknTLpK2HM3olKvebP8JcsWsGxoDw75igwx_ehAwhnQQPIY"
-                />
-              </div>
-              <h4 className="font-headline text-lg text-primary mb-1">
-                許願便利商店
-              </h4>
-              <p className="font-label text-xs font-semibold text-on-surface-variant uppercase tracking-tighter">
-                陸沉淵
-              </p>
-            </div>
-
-            {/* Novel Card 5 */}
-            <div className="flex-none w-64 snap-start group">
-              <div className="aspect-[2/3] bg-surface-container-highest rounded-lg mb-4 overflow-hidden shadow-sm group-hover:-translate-y-2 transition-transform duration-300">
-                <img
-                  alt="Novel Cover"
-                  className="w-full h-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5cNKvo8PuhG8apyAg_ATyiOG1csc8Pniihpq7l2f3A-QNbL4M20Z53SSpHN3S4TjuzWhuBYX2hisV8usYSCmVteE2D2b-tdL-TiObw2RYNPbY9GSS-5E2BAuRQOKr09KdTBGsaE7TDN1VC6ooDPfqa3oW5NTkXgHlkEH9M_2D9raFZE5b0Geovt1b0kNUGdnampbL8FBKS1B5CGkqIAZJ1ISNo-c4nBcfbMMGN7ccLMM32cr5XCn_vqM4R9MJR2fi1IYFiya6Fgs"
-                />
-              </div>
-              <h4 className="font-headline text-lg text-primary mb-1">
-                燼光財團線
-              </h4>
-              <p className="font-label text-xs font-semibold text-on-surface-variant uppercase tracking-tighter">
-                陸沉淵
-              </p>
-            </div>
-
-            {/* Novel Card 6 */}
-            <div className="flex-none w-64 snap-start group">
-              <div className="aspect-[2/3] bg-surface-container-highest rounded-lg mb-4 overflow-hidden shadow-sm group-hover:-translate-y-2 transition-transform duration-300">
-                <img
-                  alt="Novel Cover"
-                  className="w-full h-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJ5tmAQS23vo8Drf7IDg_a7cn2IGsGx9P-73ikJSXI-I7HpeGXl21T89WLFP8JEqRWC9hA5p9w1UnNLkcSQR2KHubt1SpdB-lbs9fd1iXvqsWLvJYiCeLMiN1scXy-WXtv3kuVn_u3Y6VmA6IGEdQ3FxL8TMl5kITUrveWwHHfzXVPUZz11SN6AbT0tmPXRl0lDFHhUFCW1hijoJZ-spI-B-73Ro4Kvi8NcfGWXxdOIyBNi4w8gpO601bTuvqGHMOIbgeHY10x8fo"
-                />
-              </div>
-              <h4 className="font-headline text-lg text-primary mb-1">
-                我直播的不是靈異
-              </h4>
-              <p className="font-label text-xs font-semibold text-on-surface-variant uppercase tracking-tighter">
-                簡瑞麒
-              </p>
-            </div>
+            {seriesShelf.map((s) => {
+              const meta = SERIES_META[s.series];
+              return (
+                <Link
+                  key={s.series}
+                  href={`/series/${encodeURIComponent(s.series)}`}
+                  className="flex-none w-64 snap-start group no-underline"
+                >
+                  <div
+                    className="aspect-[2/3] rounded-lg mb-4 shadow-sm group-hover:-translate-y-2 transition-transform duration-300 flex items-end p-5"
+                    style={{ backgroundColor: meta?.color ?? "#333" }}
+                  >
+                    <span className="text-xl font-headline text-white drop-shadow-md leading-tight">
+                      {s.series}
+                    </span>
+                  </div>
+                  <h4 className="font-headline text-lg text-primary mb-1">
+                    {s.series}
+                  </h4>
+                  <p className="font-label text-xs text-on-surface-variant">
+                    {s.voice && <span className="font-semibold uppercase tracking-tighter">{s.voice}</span>}
+                    {s.latest_episode && <span> · 最新 {s.latest_episode}</span>}
+                    <span> · {s.count} 章</span>
+                  </p>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
@@ -369,43 +309,7 @@ export default async function HomePage() {
         </div>
       </footer>
 
-      {/* BottomNavBar (Mobile Player Controls) */}
-      <nav className="fixed bottom-0 left-0 w-full h-20 bg-surface-variant/70 backdrop-blur-xl border-t border-on-surface/10 shadow-[0_-12px_32px_rgba(28,27,26,0.06)] flex justify-around items-center px-6 pb-safe z-50 rounded-t-2xl md:hidden">
-        <div className="flex flex-col items-center gap-1 group text-[#5c5957]">
-          <span className="material-symbols-outlined text-xl">
-            slow_motion_video
-          </span>
-          <span className="font-label text-[10px] font-semibold">語速</span>
-        </div>
-        <div className="flex flex-col items-center gap-1 group text-[#5c5957]">
-          <span className="material-symbols-outlined text-xl">replay_10</span>
-          <span className="font-label text-[10px] font-semibold">後退</span>
-        </div>
-        <div className="flex flex-col items-center gap-1 group text-primary-container scale-110">
-          <span
-            className="material-symbols-outlined text-3xl"
-            style={{ fontVariationSettings: "'FILL' 1" }}
-          >
-            play_circle
-          </span>
-          <span className="font-label text-[10px] font-semibold">播放</span>
-        </div>
-        <div className="flex flex-col items-center gap-1 group text-[#5c5957]">
-          <span className="material-symbols-outlined text-xl">forward_30</span>
-          <span className="font-label text-[10px] font-semibold">前進</span>
-        </div>
-        <Link
-          href="/playlist"
-          className="flex flex-col items-center gap-1 group text-[#5c5957]"
-        >
-          <span className="material-symbols-outlined text-xl">
-            queue_music
-          </span>
-          <span className="font-label text-[10px] font-semibold">
-            待播清單
-          </span>
-        </Link>
-      </nav>
+      {/* GlobalPlayer is rendered in layout.tsx */}
     </>
   );
 }

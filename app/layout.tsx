@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Noto_Serif_TC, Inter } from "next/font/google";
 import "./globals.css";
+import { QueueProvider } from "@/src/components/QueueProvider";
+import GlobalPlayer from "@/src/components/GlobalPlayer";
 
 const notoSerifTC = Noto_Serif_TC({
   variable: "--font-noto-serif-tc",
@@ -37,7 +39,10 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body bg-surface text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
-        {children}
+        <QueueProvider>
+          {children}
+          <GlobalPlayer />
+        </QueueProvider>
       </body>
     </html>
   );
