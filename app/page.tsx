@@ -6,9 +6,9 @@ import { supabase } from "@/src/lib/supabase";
 import { SERIES_META } from "@/src/lib/series-meta";
 
 const fallbackPosts = [
-  { id: "fallback-1", title: "燼光之城：黎明前的最後一夜", series: "燼光宇宙", voice: "陸沉淵", word_count: 3200 },
-  { id: "fallback-2", title: "台北地下鐵的幽靈列車", series: "暗黑宇宙", voice: "簡瑞麒", word_count: 2800 },
-  { id: "fallback-3", title: "許願便利商店：第四個願望", series: "燼光宇宙", voice: "林宗佑", word_count: 4100 },
+  { id: "fallback-1", title: "燼光之城：黎明前的最後一夜", series: "燼光宇宙", episode: "S01E01", voice: "陸沉淵", word_count: 3200 },
+  { id: "fallback-2", title: "台北地下鐵的幽靈列車", series: "暗黑宇宙", episode: "S01E01", voice: "簡瑞麒", word_count: 2800 },
+  { id: "fallback-3", title: "許願便利商店：第四個願望", series: "燼光宇宙", episode: "S01E02", voice: "林宗佑", word_count: 4100 },
 ];
 
 export default async function HomePage() {
@@ -16,7 +16,7 @@ export default async function HomePage() {
   try {
     const { data, error } = await supabase
       .from("posts")
-      .select("id, title, series, voice, word_count")
+      .select("id, title, series, episode, voice, word_count")
       .eq("status", "published")
       .order("created_at", { ascending: false })
       .limit(3);
@@ -153,42 +153,63 @@ export default async function HomePage() {
             {latestPosts && latestPosts.length > 0 ? (
               <>
                 {/* Main Feature */}
-                <Link
-                  href={`/posts/${latestPosts[0].id}`}
-                  className="md:col-span-8 bg-surface-container-low rounded-lg p-1 group cursor-pointer no-underline"
-                >
+                <article className="md:col-span-8 bg-surface-container-low rounded-lg p-1 group">
                   <div className="p-8">
                     <div className="flex items-center gap-3 mb-4">
-                      <span className="font-label text-[10px] font-bold uppercase tracking-widest bg-primary-container text-on-primary px-2 py-1 rounded">
+                      <Link
+                        href={`/series/${encodeURIComponent(latestPosts[0].series)}`}
+                        className="font-label text-[10px] font-bold uppercase tracking-widest bg-primary-container text-on-primary px-2 py-1 rounded no-underline hover:opacity-80 transition-opacity"
+                      >
                         {latestPosts[0].series}
-                      </span>
+                      </Link>
+                      {latestPosts[0].episode && (
+                        <span className="font-label text-[10px] font-bold uppercase tracking-widest bg-surface-container-highest text-on-surface-variant px-2 py-1 rounded">
+                          {latestPosts[0].episode}
+                        </span>
+                      )}
                       <span className="font-label text-xs text-on-surface-variant">
                         {latestPosts[0].word_count?.toLocaleString()} 字
                       </span>
                     </div>
-                    <h3 className="text-3xl font-headline text-primary group-hover:underline decoration-primary/30 underline-offset-4 mb-4">
-                      {latestPosts[0].title}
-                    </h3>
+                    <Link
+                      href={`/posts/${latestPosts[0].id}`}
+                      className="no-underline"
+                    >
+                      <h3 className="text-3xl font-headline text-primary group-hover:underline decoration-primary/30 underline-offset-4 mb-4 cursor-pointer">
+                        {latestPosts[0].title}
+                      </h3>
+                    </Link>
                     <p className="text-on-surface-variant">
                       聲線：{latestPosts[0].voice}
                     </p>
                   </div>
-                </Link>
+                </article>
 
                 {/* Side Features */}
                 {latestPosts.slice(1).map((post) => (
-                  <Link
+                  <article
                     key={post.id}
-                    href={`/posts/${post.id}`}
-                    className="md:col-span-4 bg-surface-container-low rounded-lg p-6 group cursor-pointer flex flex-col justify-between border border-transparent hover:bg-surface-container-high transition-colors no-underline"
+                    className="md:col-span-4 bg-surface-container-low rounded-lg p-6 group flex flex-col justify-between border border-transparent hover:bg-surface-container-high transition-colors"
                   >
                     <div>
-                      <span className="font-label text-[10px] font-bold uppercase tracking-widest text-on-primary-fixed-variant block mb-4">
-                        {post.series}
-                      </span>
-                      <h3 className="text-xl font-headline text-primary mb-4 leading-snug">
-                        {post.title}
-                      </h3>
+                      <div className="flex items-center gap-2 mb-4">
+                        <Link
+                          href={`/series/${encodeURIComponent(post.series)}`}
+                          className="font-label text-[10px] font-bold uppercase tracking-widest text-on-primary-fixed-variant no-underline hover:text-primary transition-colors"
+                        >
+                          {post.series}
+                        </Link>
+                        {post.episode && (
+                          <span className="font-label text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                            {post.episode}
+                          </span>
+                        )}
+                      </div>
+                      <Link href={`/posts/${post.id}`} className="no-underline">
+                        <h3 className="text-xl font-headline text-primary mb-4 leading-snug group-hover:underline decoration-primary/30 underline-offset-4 cursor-pointer">
+                          {post.title}
+                        </h3>
+                      </Link>
                       <p className="text-on-surface-variant text-sm mb-2">
                         聲線：{post.voice}
                       </p>
@@ -196,7 +217,7 @@ export default async function HomePage() {
                         {post.word_count?.toLocaleString()} 字
                       </p>
                     </div>
-                  </Link>
+                  </article>
                 ))}
               </>
             ) : (
