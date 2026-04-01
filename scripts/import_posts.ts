@@ -13,7 +13,7 @@ const seriesMap: Record<string, { series: string; voice: string }> = {
   '01_斬斷星辰':       { series: '斬斷星辰',       voice: '林宗佑' },
   '02_台北冥影':       { series: '台北冥影',       voice: '簡瑞麒' },
   '03_許願便利商店':   { series: '許願便利商店',   voice: '陸沉淵' },
-  '04_燼光':           { series: '燼光',           voice: '陸沉淵' },
+  '04_守夜人':         { series: '守夜人',         voice: '陸沉淵' },
   '05_我直播的不是靈異': { series: '我直播的不是靈異', voice: '簡瑞麒' },
 }
 

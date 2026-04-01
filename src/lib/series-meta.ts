@@ -18,7 +18,7 @@ export const SERIES_META: Record<
     desc: "黑色寓言 / 單元劇。凌晨三點的便利商店，門口寫著「徵求願望，代價自負」。",
     totalChapters: 36,
   },
-  燼光: {
+  守夜人: {
     color: "#4a1c1c",
     desc: "史詩奇幻 / 都市戰鬥。白天是超商店員，脫下圍裙後是持傘的殲滅者。",
     totalChapters: 36,
@@ -26,6 +26,11 @@ export const SERIES_META: Record<
   我直播的不是靈異: {
     color: "#1c2a3a",
     desc: "靈異追債 / 直播互動 / 社會諷刺。過氣直播主拿到一張額度無限的黑業障卡，開始替冥界銀行追債。",
+    totalChapters: 36,
+  },
+  "燼光 CINERIS": {
+    color: "#012d1d",
+    desc: "詼諧的史詩愛情奇幻。台北圖書館檔案管理員，是所有人眼中最熱愛生活的人。只有他自己知道那是假裝的。",
     totalChapters: 36,
   },
 };
