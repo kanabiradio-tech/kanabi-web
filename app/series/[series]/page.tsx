@@ -72,12 +72,22 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
         <div className="flex flex-col md:flex-row gap-10 mb-16">
           {/* Cover */}
           <div
-            className="flex-none w-48 md:w-56 aspect-[2/3] rounded-xl shadow-lg flex items-end p-6"
+            className="flex-none w-48 md:w-56 aspect-[2/3] rounded-xl shadow-lg overflow-hidden relative"
             style={{ backgroundColor: meta?.color ?? "#333" }}
           >
-            <h2 className="text-2xl font-headline text-white leading-tight drop-shadow-md">
-              {seriesName}
-            </h2>
+            {meta?.cover ? (
+              <img
+                src={meta.cover}
+                alt={seriesName}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-end p-6">
+                <h2 className="text-2xl font-headline text-white leading-tight drop-shadow-md">
+                  {seriesName}
+                </h2>
+              </div>
+            )}
           </div>
 
           {/* Info */}

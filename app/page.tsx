@@ -272,12 +272,22 @@ export default async function HomePage() {
                   className="flex-none w-64 snap-start group no-underline"
                 >
                   <div
-                    className="aspect-[2/3] rounded-lg mb-4 shadow-sm group-hover:-translate-y-2 transition-transform duration-300 flex items-end p-5"
+                    className="aspect-[2/3] rounded-lg mb-4 shadow-sm group-hover:-translate-y-2 transition-transform duration-300 overflow-hidden relative"
                     style={{ backgroundColor: meta?.color ?? "#333" }}
                   >
-                    <span className="text-xl font-headline text-white drop-shadow-md leading-tight">
-                      {s.series}
-                    </span>
+                    {meta?.cover ? (
+                      <img
+                        src={meta.cover}
+                        alt={s.series}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-end p-5">
+                        <span className="text-xl font-headline text-white drop-shadow-md leading-tight">
+                          {s.series}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <h4 className="font-headline text-lg text-primary mb-1">
                     {s.series}
