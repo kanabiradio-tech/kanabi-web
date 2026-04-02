@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'
 import Link from "next/link";
 import { supabase } from "@/src/lib/supabase";
 import { SERIES_META } from "@/src/lib/series-meta";
+import BookshelfCarousel from "@/src/components/BookshelfCarousel";
 
 const fallbackPosts = [
   { id: "fallback-1", title: "燼光之城：黎明前的最後一夜", series: "燼光宇宙", episode: "S01E01", voice: "陸沉淵", word_count: 3200 },
@@ -261,45 +262,7 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
-          <div className="flex gap-8 px-8 overflow-x-auto pb-4 snap-x scroll-smooth" style={{ WebkitOverflowScrolling: "touch" }}>
-            {seriesShelf.map((s) => {
-              const meta = SERIES_META[s.series];
-              return (
-                <Link
-                  key={s.series}
-                  href={`/series/${encodeURIComponent(s.series)}`}
-                  className="flex-none w-64 snap-start group no-underline"
-                >
-                  <div
-                    className="aspect-[2/3] rounded-lg mb-4 shadow-sm group-hover:-translate-y-2 transition-transform duration-300 overflow-hidden relative"
-                    style={{ backgroundColor: meta?.color ?? "#333" }}
-                  >
-                    {meta?.cover ? (
-                      <img
-                        src={meta.cover}
-                        alt={s.series}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-end p-5">
-                        <span className="text-xl font-headline text-white drop-shadow-md leading-tight">
-                          {s.series}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <h4 className="font-headline text-lg text-primary mb-1">
-                    {s.series}
-                  </h4>
-                  <p className="font-label text-xs text-on-surface-variant">
-                    {s.voice && <span className="font-semibold uppercase tracking-tighter">{s.voice}</span>}
-                    {s.latest_episode && <span> · 最新 {s.latest_episode}</span>}
-                    <span> · {s.count} 章</span>
-                  </p>
-                </Link>
-              );
-            })}
-          </div>
+          <BookshelfCarousel seriesShelf={seriesShelf} seriesMeta={SERIES_META} />
         </section>
 
       </main>
