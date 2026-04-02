@@ -71,21 +71,9 @@ export default async function HomePage() {
           <div className="hidden md:flex items-center gap-8">
             <a
               className="font-label text-[0.75rem] uppercase font-medium tracking-tight text-primary border-b-2 border-primary-container pb-1"
-              href="#"
+              href="/"
             >
               首頁
-            </a>
-            <a
-              className="font-label text-[0.75rem] uppercase font-medium tracking-tight text-[#5c5957] hover:text-primary transition-colors"
-              href="#"
-            >
-              燼光宇宙
-            </a>
-            <a
-              className="font-label text-[0.75rem] uppercase font-medium tracking-tight text-[#5c5957] hover:text-primary transition-colors"
-              href="#"
-            >
-              暗黑宇宙
             </a>
             <Link
               className="font-label text-[0.75rem] uppercase font-medium tracking-tight text-[#5c5957] hover:text-primary transition-colors"
@@ -258,11 +246,22 @@ export default async function HomePage() {
         </section>
 
         {/* Top Novels (Horizontal Scroll — from Supabase) */}
-        <section className="bg-surface-container-low py-24 mb-32 overflow-hidden">
-          <div className="px-8 max-w-screen-2xl mx-auto mb-12 flex justify-between items-center">
+        <section className="bg-surface-container-low py-24 mb-32">
+          <div className="px-8 max-w-screen-2xl mx-auto mb-8 flex flex-col gap-6">
             <h2 className="text-3xl font-headline text-primary">熱門小說</h2>
+            <div className="flex flex-wrap gap-2">
+              {seriesShelf.map((s) => (
+                <Link
+                  key={`pill-${s.series}`}
+                  href={`/series/${encodeURIComponent(s.series)}`}
+                  className="px-4 py-2 rounded-full bg-surface-container-highest text-on-surface-variant font-label text-xs font-semibold no-underline hover:bg-primary hover:text-on-primary transition-all"
+                >
+                  {s.series}
+                </Link>
+              ))}
+            </div>
           </div>
-          <div className="flex gap-8 px-8 overflow-x-auto pb-4 snap-x">
+          <div className="flex gap-8 px-8 overflow-x-auto pb-4 snap-x scroll-smooth" style={{ WebkitOverflowScrolling: "touch" }}>
             {seriesShelf.map((s) => {
               const meta = SERIES_META[s.series];
               return (
@@ -303,32 +302,6 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Feature: Curation Tool Teaser */}
-        <section className="px-8">
-          <div className="relative rounded-xl overflow-hidden bg-primary p-12 md:p-24 flex items-center justify-center text-center">
-            <div className="absolute inset-0 opacity-20">
-              <img
-                alt="Background Texture"
-                className="w-full h-full object-cover mix-blend-overlay"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWgmIt0NNLmpHXLucLpBT2HDUjPAp7z7kp-msJgxCsbX-26MfIwN6B1JYQ29zQKJ4HRX3FGzrL_jzepT-fbWTECy_0fs0svNuwN6fBR6ew0u1MHAI96_cbT9Ll-Qv39B9pfTAvzhnvC283k-7c0D2SPdQwMkBCE-RcV71EHav82LMt_VjDdESW-wB0J7tYqt0ATs1bW0TyKJjXgMZI6VTXVlnVUvVd-6jkt9MW5cJqmGCZvkICUw7G7fUdAsF1YADNhIWMG_Jq01M"
-              />
-            </div>
-            <div className="relative z-10 max-w-2xl">
-              <span className="font-label text-[10px] font-bold uppercase tracking-[0.3em] text-on-primary-container mb-8 inline-block">
-                思維揉合的藝術
-              </span>
-              <h2 className="text-4xl md:text-6xl font-headline text-white mb-8 leading-tight">
-                將台北的黑夜與萬年的記憶，揉合成你的每日晨讀。
-              </h2>
-              <p className="text-on-primary-container font-serif text-lg mb-12">
-                我們的策展工具能智能地將今日頭條與經典及當代文學配對，建立起富有主題性的閱讀橋樑。
-              </p>
-              <button className="bg-primary-fixed text-on-primary-fixed px-10 py-5 rounded-full font-label font-bold tracking-tight hover:scale-105 transition-all">
-                體驗策展工具
-              </button>
-            </div>
-          </div>
-        </section>
       </main>
 
       {/* Footer */}
