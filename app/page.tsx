@@ -131,12 +131,6 @@ export default async function HomePage() {
                 為您精選今日必讀的全球觀點。
               </p>
             </div>
-            <a
-              className="font-label text-xs font-bold text-primary border-b border-primary/20 hover:border-primary pb-1 transition-all"
-              href="#"
-            >
-              瀏覽所有故事
-            </a>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
             {latestPosts && latestPosts.length > 0 ? (
