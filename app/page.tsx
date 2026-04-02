@@ -128,9 +128,15 @@ export default async function HomePage() {
                 今日精選
               </h2>
               <p className="text-on-surface-variant font-serif">
-                為您精選今日必讀的全球觀點。
+                每日更新，七條連載線同步推進。
               </p>
             </div>
+            <Link
+              className="font-label text-xs font-bold text-primary border-b border-primary/20 hover:border-primary pb-1 transition-all no-underline"
+              href="/series"
+            >
+              瀏覽所有故事
+            </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
             {latestPosts && latestPosts.length > 0 ? (
