@@ -21,12 +21,6 @@ export const SERIES_META: Record<
     totalChapters: 365,
     cover: "/covers/xu-yuan-store.jpg",
   },
-  守夜人: {
-    color: "#4a1c1c",
-    desc: "史詩奇幻 / 都市戰鬥。白天是超商店員，脫下圍裙後是持傘的殲滅者。",
-    totalChapters: 365,
-    cover: "/covers/shou-ye-ren.jpg",
-  },
   我直播的不是靈異: {
     color: "#1c2a3a",
     desc: "靈異追債 / 直播互動 / 社會諷刺。過氣直播主拿到一張額度無限的黑業障卡，開始替冥界銀行追債。",

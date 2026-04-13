@@ -128,7 +128,7 @@ export default async function HomePage() {
                 今日精選
               </h2>
               <p className="text-on-surface-variant font-serif">
-                每日更新，七條連載線同步推進。
+                每日更新，六條連載線同步推進。
               </p>
             </div>
             <Link

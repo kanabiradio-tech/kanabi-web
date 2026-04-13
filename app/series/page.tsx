@@ -76,7 +76,7 @@ export default async function AllSeriesPage() {
           所有故事
         </h1>
         <p className="text-on-surface-variant font-serif text-lg mb-12">
-          七條連載線，同一座台北，不同的深夜。
+          六條連載線，同一座台北，不同的深夜。
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

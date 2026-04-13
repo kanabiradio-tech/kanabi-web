@@ -13,7 +13,7 @@ const seriesMap: Record<string, { series: string; voice: string }> = {
   '01_斬斷星辰':         { series: '斬斷星辰',         voice: '林宗佑' },
   '02_台北冥影':         { series: '台北冥影',         voice: '簡瑞麒' },
   '03_許願便利商店':     { series: '許願便利商店',     voice: '陸沉淵' },
-  '04_守夜人':           { series: '守夜人',           voice: '陸沉淵' },
+  // '04_守夜人':           { series: '守夜人',           voice: '陸沉淵' },  // 暫停，下一季再開
   '05_我直播的不是靈異': { series: '我直播的不是靈異', voice: '簡瑞麒' },
   '燼光_CINERIS':        { series: '燼光 CINERIS',    voice: '陸沉淵' },
   '06_鯤島淵界':         { series: '鯤島淵界',        voice: '陸沉淵' },
