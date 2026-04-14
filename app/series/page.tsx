@@ -14,6 +14,7 @@ export default async function AllSeriesPage() {
     .from("posts")
     .select("series, voice, episode, word_count")
     .eq("status", "published")
+    .lte("published_at", new Date().toISOString())
     .order("episode", { ascending: false });
 
   const seriesMap = new Map<

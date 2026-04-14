@@ -27,6 +27,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
     .select("id, title, series, episode, voice, word_count, audio_url")
     .eq("series", seriesName)
     .eq("status", "published")
+    .lte("published_at", new Date().toISOString())
     .order("episode", { ascending: true });
 
   const meta = SERIES_META[seriesName];

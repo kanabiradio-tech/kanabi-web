@@ -19,7 +19,8 @@ export default async function HomePage() {
       .from("posts")
       .select("id, title, series, episode, voice, word_count")
       .eq("status", "published")
-      .order("created_at", { ascending: false })
+      .lte("published_at", new Date().toISOString())
+      .order("published_at", { ascending: false })
       .limit(3);
 
     if (error) {
@@ -41,6 +42,7 @@ export default async function HomePage() {
       .from("posts")
       .select("series, voice, episode")
       .eq("status", "published")
+      .lte("published_at", new Date().toISOString())
       .order("episode", { ascending: false });
 
     if (allPosts) {

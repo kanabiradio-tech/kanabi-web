@@ -36,12 +36,16 @@ export default async function PostPage({ params }: PostPageProps) {
 
   if (error || !post) notFound();
 
+  // Block access to scheduled (future) posts
+  if (post.published_at && new Date(post.published_at) > new Date()) notFound();
+
   // Fetch all episodes in this series for prev/next navigation
   const { data: siblings } = await supabase
     .from("posts")
     .select("id, title, episode")
     .eq("series", post.series)
     .eq("status", "published")
+    .lte("published_at", new Date().toISOString())
     .order("episode", { ascending: true });
 
   const currentIdx = siblings?.findIndex((s) => s.id === post.id) ?? -1;
