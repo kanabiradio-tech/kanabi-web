@@ -37,6 +37,6 @@ export const SERIES_META: Record<
     color: "#8b1a1a",
     desc: "都市奇幻 × 台灣民俗 × 詼諧史詩。三千歲的存在，最大的敵人是食物冷掉。",
     totalChapters: 365,
-    cover: "",
+    cover: "/covers/kunlun-abyss.jpg",
   },
 };
