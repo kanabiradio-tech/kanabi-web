@@ -19,6 +19,26 @@ const seriesMap: Record<string, { series: string; voice: string }> = {
   '06_鯤島淵界':         { series: '鯤島淵界',        voice: '陸沉淵' },
 }
 
+function extractTitle(raw: string, fallback: string): string {
+  const lines = raw.split('\n')
+
+  for (const line of lines) {
+    const match = line.match(/^##\s+(?:第[一二三四五六七八九十百千零〇兩]+章[　\s]*)?(.+)/)
+    if (match) {
+      return match[1].trim()
+    }
+  }
+
+  for (const line of lines) {
+    const match = line.match(/^#\s+(?:S\d+E\d+\s*[　\s]*)?\s*(.+)/)
+    if (match) {
+      return match[1].trim()
+    }
+  }
+
+  return fallback
+}
+
 async function main() {
   // 1. Fetch all existing episodes from Supabase
   const { data: existing, error: fetchError } = await supabase
@@ -61,19 +81,7 @@ async function main() {
       const filePath = resolve(s01Dir, file)
       const raw = readFileSync(filePath, 'utf-8')
 
-      // Extract title from first heading line
-      const lines = raw.split('\n')
-      let title = ''
-      for (const line of lines) {
-        const match = line.match(/^#\s+(?:S\d+E\d+\s*[　\s]*)?\s*(.+)/)
-        if (match) {
-          title = match[1].trim()
-          break
-        }
-      }
-      if (!title) {
-        title = `${meta.series} ${episodeCode}`
-      }
+      const title = extractTitle(raw, `${meta.series} ${episodeCode}`)
 
       const wordCount = (raw.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g) || []).length
 
