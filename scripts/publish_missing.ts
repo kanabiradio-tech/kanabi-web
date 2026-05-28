@@ -7,7 +7,7 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impxc3FocmF1bHpidmJseHJicXNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NDIwOTYsImV4cCI6MjA5MDQxODA5Nn0.bSXEldbQUNBcZKHSVLt8Z1JX9IPeVYAO8Wb3R_4erLw'
 )
 
-const NOVELS_DIR = '/Volumes/Macdate3/Dropbox/kanabi-darkverse/novels'
+const NOVELS_DIR = '/Volumes/Dbox_Data/Dropbox/kanabi-darkverse/novels'
 
 const seriesMap: Record<string, { series: string; voice: string }> = {
   '01_斬斷星辰':         { series: '斬斷星辰',         voice: '林宗佑' },
