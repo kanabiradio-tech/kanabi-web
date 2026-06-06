@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { supabase } from "@/src/lib/supabase";
 import { SERIES_META } from "@/src/lib/series-meta";
+import { ENABLE_AUDIO_FEATURES } from "@/src/lib/features";
 
 export const metadata: Metadata = {
   title: "所有故事 - kanabi.live",
@@ -62,12 +63,14 @@ export default async function AllSeriesPage() {
             <span className="text-primary font-label text-[0.75rem] font-medium tracking-tight uppercase border-b-2 border-primary-container pb-1">
               所有故事
             </span>
-            <Link
-              className="text-[#5c5957] hover:text-primary transition-colors font-label text-[0.75rem] font-medium tracking-tight uppercase no-underline"
-              href="/playlist"
-            >
-              我的清單
-            </Link>
+            {ENABLE_AUDIO_FEATURES && (
+              <Link
+                className="text-[#5c5957] hover:text-primary transition-colors font-label text-[0.75rem] font-medium tracking-tight uppercase no-underline"
+                href="/playlist"
+              >
+                我的清單
+              </Link>
+            )}
           </div>
         </nav>
       </header>
@@ -116,7 +119,7 @@ export default async function AllSeriesPage() {
                   </p>
                 )}
                 <div className="flex flex-wrap items-center gap-3 text-on-surface-variant text-xs font-label">
-                  {s.voice && (
+                  {ENABLE_AUDIO_FEATURES && s.voice && (
                     <span className="flex items-center gap-1">
                       <span className="material-symbols-outlined text-xs">mic</span>
                       {s.voice}

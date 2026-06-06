@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { ENABLE_AUDIO_FEATURES } from "@/src/lib/features";
 
 interface SeriesItem {
   series: string;
@@ -154,7 +155,7 @@ export default function BookshelfCarousel({
                 {s.series}
               </h4>
               <p className="font-label text-xs text-on-surface-variant">
-                {s.voice && (
+                {ENABLE_AUDIO_FEATURES && s.voice && (
                   <span className="font-semibold uppercase tracking-tighter">
                     {s.voice}
                   </span>

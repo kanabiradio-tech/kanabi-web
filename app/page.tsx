@@ -5,6 +5,7 @@ import Link from "next/link";
 import { supabase } from "@/src/lib/supabase";
 import { SERIES_META } from "@/src/lib/series-meta";
 import BookshelfCarousel from "@/src/components/BookshelfCarousel";
+import { ENABLE_AUDIO_FEATURES } from "@/src/lib/features";
 
 const fallbackPosts = [
   { id: "fallback-1", title: "燼光之城：黎明前的最後一夜", series: "燼光宇宙", episode: "S01E01", voice: "陸沉淵", word_count: 3200 },
@@ -78,12 +79,14 @@ export default async function HomePage() {
             >
               首頁
             </a>
-            <Link
-              className="font-label text-[0.75rem] uppercase font-medium tracking-tight text-[#5c5957] hover:text-primary transition-colors"
-              href="/playlist"
-            >
-              我的清單
-            </Link>
+            {ENABLE_AUDIO_FEATURES && (
+              <Link
+                className="font-label text-[0.75rem] uppercase font-medium tracking-tight text-[#5c5957] hover:text-primary transition-colors"
+                href="/playlist"
+              >
+                我的清單
+              </Link>
+            )}
           </div>
           <div className="flex items-center gap-6">
             <button className="material-symbols-outlined text-primary-container hover:bg-surface-variant/50 p-2 rounded-md transition-all">
@@ -170,9 +173,11 @@ export default async function HomePage() {
                         {latestPosts[0].title}
                       </h3>
                     </Link>
-                    <p className="text-on-surface-variant mb-5">
-                      聲線：{latestPosts[0].voice}
-                    </p>
+                    {ENABLE_AUDIO_FEATURES && (
+                      <p className="text-on-surface-variant mb-5">
+                        聲線：{latestPosts[0].voice}
+                      </p>
+                    )}
                     <div className="flex items-center gap-3">
                       <Link
                         href={`/posts/${latestPosts[0].id}`}
@@ -181,13 +186,15 @@ export default async function HomePage() {
                         <span className="material-symbols-outlined text-lg">menu_book</span>
                         閱讀
                       </Link>
-                      <Link
-                        href={`/posts/${latestPosts[0].id}#listen`}
-                        className="inline-flex items-center gap-2 bg-surface-container-high text-primary px-5 py-2.5 rounded-full font-label text-sm font-semibold no-underline hover:bg-surface-container-highest transition-all"
-                      >
-                        <span className="material-symbols-outlined text-lg">headphones</span>
-                        收聽
-                      </Link>
+                      {ENABLE_AUDIO_FEATURES && (
+                        <Link
+                          href={`/posts/${latestPosts[0].id}#listen`}
+                          className="inline-flex items-center gap-2 bg-surface-container-high text-primary px-5 py-2.5 rounded-full font-label text-sm font-semibold no-underline hover:bg-surface-container-highest transition-all"
+                        >
+                          <span className="material-symbols-outlined text-lg">headphones</span>
+                          收聽
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </article>
@@ -218,7 +225,10 @@ export default async function HomePage() {
                         </h3>
                       </Link>
                       <p className="text-on-surface-variant text-sm mb-4">
-                        {post.voice} · {post.word_count?.toLocaleString()} 字
+                        {ENABLE_AUDIO_FEATURES && post.voice
+                          ? `${post.voice} · `
+                          : ""}
+                        {post.word_count?.toLocaleString()} 字
                       </p>
                       <div className="flex items-center gap-2">
                         <Link
@@ -228,13 +238,15 @@ export default async function HomePage() {
                           <span className="material-symbols-outlined text-sm">menu_book</span>
                           閱讀
                         </Link>
-                        <Link
-                          href={`/posts/${post.id}#listen`}
-                          className="inline-flex items-center gap-1.5 bg-surface-container-highest text-on-surface-variant px-3.5 py-1.5 rounded-full font-label text-xs font-semibold no-underline hover:text-primary transition-all"
-                        >
-                          <span className="material-symbols-outlined text-sm">headphones</span>
-                          收聽
-                        </Link>
+                        {ENABLE_AUDIO_FEATURES && (
+                          <Link
+                            href={`/posts/${post.id}#listen`}
+                            className="inline-flex items-center gap-1.5 bg-surface-container-highest text-on-surface-variant px-3.5 py-1.5 rounded-full font-label text-xs font-semibold no-underline hover:text-primary transition-all"
+                          >
+                            <span className="material-symbols-outlined text-sm">headphones</span>
+                            收聽
+                          </Link>
+                        )}
                       </div>
                     </div>
                   </article>

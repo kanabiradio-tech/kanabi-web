@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { supabase } from "@/src/lib/supabase";
 import { SERIES_META } from "@/src/lib/series-meta";
+import { ENABLE_AUDIO_FEATURES } from "@/src/lib/features";
 import AddToQueueButton from "@/src/components/AddToQueueButton";
 
 interface SeriesPageProps {
@@ -53,12 +54,14 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
             >
               首頁
             </Link>
-            <Link
-              className="text-[#5c5957] hover:text-primary transition-colors font-label text-[0.75rem] font-medium tracking-tight uppercase no-underline"
-              href="/playlist"
-            >
-              我的清單
-            </Link>
+            {ENABLE_AUDIO_FEATURES && (
+              <Link
+                className="text-[#5c5957] hover:text-primary transition-colors font-label text-[0.75rem] font-medium tracking-tight uppercase no-underline"
+                href="/playlist"
+              >
+                我的清單
+              </Link>
+            )}
           </div>
           <div className="flex items-center gap-4">
             <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">
@@ -105,7 +108,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
               </p>
             )}
             <div className="flex flex-wrap items-center gap-4 text-on-surface-variant text-sm font-label mb-6">
-              {voice && (
+              {ENABLE_AUDIO_FEATURES && voice && (
                 <span className="flex items-center gap-1">
                   <span className="material-symbols-outlined text-base">
                     mic
@@ -182,28 +185,32 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
                       <span className="material-symbols-outlined text-sm">menu_book</span>
                       閱讀
                     </Link>
-                    <Link
-                      href={`/posts/${post.id}#listen`}
-                      className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full font-label text-xs font-semibold no-underline transition-all ${
-                        post.audio_url
-                          ? "bg-surface-container-highest text-primary hover:bg-surface-container-high"
-                          : "bg-surface-container-highest text-on-surface-variant/50 cursor-default"
-                      }`}
-                    >
-                      <span className="material-symbols-outlined text-sm">headphones</span>
-                      {post.audio_url ? "收聽" : "合成中"}
-                    </Link>
-                    <AddToQueueButton
-                      variant="icon"
-                      item={{
-                        id: post.id,
-                        title: post.title,
-                        series: post.series,
-                        voice: post.voice,
-                        audio_url: post.audio_url,
-                        word_count: post.word_count,
-                      }}
-                    />
+                    {ENABLE_AUDIO_FEATURES && (
+                      <>
+                        <Link
+                          href={`/posts/${post.id}#listen`}
+                          className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full font-label text-xs font-semibold no-underline transition-all ${
+                            post.audio_url
+                              ? "bg-surface-container-highest text-primary hover:bg-surface-container-high"
+                              : "bg-surface-container-highest text-on-surface-variant/50 cursor-default"
+                          }`}
+                        >
+                          <span className="material-symbols-outlined text-sm">headphones</span>
+                          {post.audio_url ? "收聽" : "合成中"}
+                        </Link>
+                        <AddToQueueButton
+                          variant="icon"
+                          item={{
+                            id: post.id,
+                            title: post.title,
+                            series: post.series,
+                            voice: post.voice,
+                            audio_url: post.audio_url,
+                            word_count: post.word_count,
+                          }}
+                        />
+                      </>
+                    )}
                   </div>
                 </div>
               ))

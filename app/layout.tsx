@@ -3,6 +3,7 @@ import { Noto_Serif_TC, Inter } from "next/font/google";
 import "./globals.css";
 import { QueueProvider } from "@/src/components/QueueProvider";
 import GlobalPlayer from "@/src/components/GlobalPlayer";
+import { ENABLE_AUDIO_FEATURES } from "@/src/lib/features";
 
 const notoSerifTC = Noto_Serif_TC({
   variable: "--font-noto-serif-tc",
@@ -41,7 +42,7 @@ export default function RootLayout({
       <body className="font-body bg-surface text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
         <QueueProvider>
           {children}
-          <GlobalPlayer />
+          {ENABLE_AUDIO_FEATURES && <GlobalPlayer />}
         </QueueProvider>
       </body>
     </html>

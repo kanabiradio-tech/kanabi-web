@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { supabase } from "@/src/lib/supabase";
 import { SERIES_META } from "@/src/lib/series-meta";
+import { ENABLE_AUDIO_FEATURES } from "@/src/lib/features";
 import PostContent from "@/src/components/PostContent";
 
 interface PostPageProps {
@@ -89,12 +90,14 @@ export default async function PostPage({ params }: PostPageProps) {
             >
               首頁
             </Link>
-            <Link
-              className="text-[#5c5957] hover:text-primary transition-colors font-label text-[0.75rem] font-medium tracking-tight uppercase no-underline"
-              href="/playlist"
-            >
-              我的清單
-            </Link>
+            {ENABLE_AUDIO_FEATURES && (
+              <Link
+                className="text-[#5c5957] hover:text-primary transition-colors font-label text-[0.75rem] font-medium tracking-tight uppercase no-underline"
+                href="/playlist"
+              >
+                我的清單
+              </Link>
+            )}
           </div>
           <div className="flex items-center gap-4">
             <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">
@@ -158,7 +161,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </h1>
 
           <div className="flex flex-wrap items-center gap-4 text-on-surface-variant text-sm font-label">
-            {post.voice && (
+            {ENABLE_AUDIO_FEATURES && post.voice && (
               <span className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-base">
                   mic
