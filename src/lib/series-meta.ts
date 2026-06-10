@@ -1,7 +1,13 @@
 // Static metadata for each series (color, description, total planned chapters, cover image)
 export const SERIES_META: Record<
   string,
-  { color: string; desc: string; totalChapters: number; cover: string }
+  {
+    color: string;
+    desc: string;
+    totalChapters: number;
+    cover: string;
+    kind?: "novel" | "column";
+  }
 > = {
   斬斷星辰: {
     color: "#1a3a5c",
@@ -38,5 +44,19 @@ export const SERIES_META: Record<
     desc: "都市奇幻 × 台灣民俗 × 詼諧史詩。三千歲的存在，最大的敵人是食物冷掉。",
     totalChapters: 365,
     cover: "/covers/kunlun-abyss.jpg",
+  },
+  每日新聞: {
+    color: "#0f4a45",
+    desc: "萬年視角 × 當日熱點。用台灣早晨能入口的語感，看日本、韓國、歐美與世界正在發生的事。",
+    totalChapters: 365,
+    cover: "",
+    kind: "column",
+  },
+  荒唐新聞: {
+    color: "#8a4b1f",
+    desc: "全球荒唐新聞 × 台灣口語轉譯。朋友傳來的那種新聞，不是新聞台播報腔。",
+    totalChapters: 208,
+    cover: "",
+    kind: "column",
   },
 };

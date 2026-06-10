@@ -75,6 +75,17 @@ function countWords(raw: string): number {
   return (raw.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g) || []).length
 }
 
+type ScheduledRow = {
+  title: string
+  content: string
+  series: string
+  episode: string
+  voice: string
+  word_count: number
+  status: 'published'
+  published_at: string
+}
+
 async function main() {
   // Parse start date from args, or use today
   const startArg = process.argv[2]
@@ -153,10 +164,8 @@ async function main() {
   }
 
   // 3. Assign dates based on schedule
-  const rows: any[] = []
+  const rows: ScheduledRow[] = []
   const seriesQueues = { ...unpublished } // copy pointers
-
-  let currentDate = new Date(startDate)
   let scheduled = 0
 
   // Schedule up to 14 days ahead (two weeks max per run)

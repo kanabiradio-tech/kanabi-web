@@ -58,6 +58,7 @@ export default async function PostPage({ params }: PostPageProps) {
   const totalChapters =
     SERIES_META[post.series]?.totalChapters ?? siblings?.length ?? 0;
   const chapterNum = currentIdx >= 0 ? currentIdx + 1 : null;
+  const isColumn = SERIES_META[post.series]?.kind === "column";
 
   const publishDate = post.published_at ?? post.created_at;
   const formattedDate = publishDate
@@ -151,7 +152,7 @@ export default async function PostPage({ params }: PostPageProps) {
             )}
             {chapterNum && (
               <span className="font-label text-xs text-on-surface-variant">
-                第 {chapterNum} / {totalChapters} 章
+                第 {chapterNum} / {totalChapters} {isColumn ? "篇" : "章"}
               </span>
             )}
           </div>
@@ -210,7 +211,7 @@ export default async function PostPage({ params }: PostPageProps) {
                 <span className="material-symbols-outlined text-sm">
                   arrow_back
                 </span>
-                上一章
+                {isColumn ? "上一篇" : "上一章"}
               </span>
               <p className="font-headline text-primary text-sm group-hover:underline">
                 {prevPost.title}
@@ -225,7 +226,7 @@ export default async function PostPage({ params }: PostPageProps) {
               className="group p-4 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors text-right no-underline"
             >
               <span className="font-label text-xs text-on-surface-variant flex items-center justify-end gap-1 mb-1">
-                下一章
+                {isColumn ? "下一篇" : "下一章"}
                 <span className="material-symbols-outlined text-sm">
                   arrow_forward
                 </span>

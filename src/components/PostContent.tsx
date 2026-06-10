@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { SERIES_META } from "@/src/lib/series-meta";
 import { ENABLE_AUDIO_FEATURES } from "@/src/lib/features";
 import ListenView from "./ListenView";
@@ -20,18 +20,13 @@ interface PostContentProps {
 }
 
 export default function PostContent({ post }: PostContentProps) {
-  const [mode, setMode] = useState<"read" | "listen">("read");
-
-  // Auto-switch to listen mode if URL has #listen
-  useEffect(() => {
-    if (
-      ENABLE_AUDIO_FEATURES &&
-      typeof window !== "undefined" &&
-      window.location.hash === "#listen"
-    ) {
-      setMode("listen");
-    }
-  }, []);
+  const [mode, setMode] = useState<"read" | "listen">(() =>
+    ENABLE_AUDIO_FEATURES &&
+    typeof window !== "undefined" &&
+    window.location.hash === "#listen"
+      ? "listen"
+      : "read"
+  );
 
   return (
     <>

@@ -19,8 +19,19 @@ const seriesMap: Record<string, { series: string; voice: string }> = {
 
 const episodes = ['E01', 'E02']
 
+type PostInsert = {
+  title: string
+  content: string
+  series: string
+  episode: string
+  voice: string
+  word_count: number
+  status: 'published'
+  published_at: string
+}
+
 async function main() {
-  const rows: any[] = []
+  const rows: PostInsert[] = []
 
   for (const [folder, meta] of Object.entries(seriesMap)) {
     for (const ep of episodes) {

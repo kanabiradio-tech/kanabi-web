@@ -1,43 +1,143 @@
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
-/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { supabase } from "@/src/lib/supabase";
 import { SERIES_META } from "@/src/lib/series-meta";
 import BookshelfCarousel from "@/src/components/BookshelfCarousel";
 import { ENABLE_AUDIO_FEATURES } from "@/src/lib/features";
 
-const fallbackPosts = [
-  { id: "fallback-1", title: "燼光之城：黎明前的最後一夜", series: "燼光宇宙", episode: "S01E01", voice: "陸沉淵", word_count: 3200 },
-  { id: "fallback-2", title: "台北地下鐵的幽靈列車", series: "暗黑宇宙", episode: "S01E01", voice: "簡瑞麒", word_count: 2800 },
-  { id: "fallback-3", title: "許願便利商店：第四個願望", series: "燼光宇宙", episode: "S01E02", voice: "林宗佑", word_count: 4100 },
+type HomePost = {
+  id: string;
+  title: string;
+  series: string;
+  episode: string | null;
+  voice: string | null;
+  word_count: number | null;
+  published_at?: string | null;
+};
+
+const fallbackPosts: HomePost[] = [
+  {
+    id: "fallback-1",
+    title: "晨曦將至，萬年已過",
+    series: "每日新聞",
+    episode: "NEWS-TODAY",
+    voice: "陸沉淵",
+    word_count: 1800,
+  },
+  {
+    id: "fallback-2",
+    title: "外國人才發現，台灣人早就知道",
+    series: "荒唐新聞",
+    episode: "ODD-TODAY",
+    voice: "林宗佑",
+    word_count: 1600,
+  },
+  {
+    id: "fallback-3",
+    title: "燼光 CINERIS",
+    series: "燼光 CINERIS",
+    episode: "S01E01",
+    voice: "陸沉淵",
+    word_count: 3200,
+  },
 ];
 
+const columnSeries = new Set(["每日新聞", "荒唐新聞", "台灣歷史", "語言觀察"]);
+
+function readingMinutes(post: Pick<HomePost, "word_count">): number {
+  return Math.max(1, Math.ceil((post.word_count ?? 500) / 500));
+}
+
+function uniquePosts(posts: HomePost[]): HomePost[] {
+  const seen = new Set<string>();
+  return posts.filter((post) => {
+    if (seen.has(post.id)) return false;
+    seen.add(post.id);
+    return true;
+  });
+}
+
+function pickTodayPackage(posts: HomePost[]): HomePost[] {
+  const daily = posts.find((post) => post.series === "每日新聞");
+  const odd = posts.find((post) => post.series === "荒唐新聞");
+  const novel = posts.find((post) => !columnSeries.has(post.series));
+  const seeds = [daily, odd, novel].filter(Boolean) as HomePost[];
+  return uniquePosts([...seeds, ...posts]).slice(0, 3);
+}
+
+function displayTitle(post: HomePost): string {
+  return post.title
+    .replace(/^每日新聞\s+\d{4}-\d{2}-\d{2}[　\s]*/, "")
+    .replace(/^荒唐新聞\s+\d{4}-\d{2}-\d{2}[　\s]*/, "");
+}
+
+function mobileTitleChunks(post: HomePost): string[] {
+  const title = displayTitle(post);
+  if (title.length <= 10) return [title];
+
+  const chunks: string[] = [];
+  for (let i = 0; i < title.length; i += 9) {
+    chunks.push(title.slice(i, i + 9));
+  }
+  return chunks;
+}
+
 export default async function HomePage() {
-  let latestPosts;
+  let recentPosts: HomePost[] = fallbackPosts;
+
   try {
     const { data, error } = await supabase
       .from("posts")
-      .select("id, title, series, episode, voice, word_count")
+      .select("id, title, series, episode, voice, word_count, published_at")
       .eq("status", "published")
       .lte("published_at", new Date().toISOString())
       .order("published_at", { ascending: false })
-      .limit(3);
+      .limit(24);
 
     if (error) {
-      console.error("Supabase query error:", JSON.stringify({ message: error.message, details: error.details, hint: error.hint, code: error.code }, null, 2));
-      latestPosts = fallbackPosts;
-    } else {
-      console.log(`Supabase query OK: returned ${data?.length ?? 0} posts`);
-      latestPosts = data;
+      console.error(
+        "Supabase query error:",
+        JSON.stringify(
+          {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code,
+          },
+          null,
+          2
+        )
+      );
+    } else if (data && data.length > 0) {
+      recentPosts = data;
     }
   } catch (err) {
-    console.error("Supabase fetch failed:", err instanceof Error ? JSON.stringify({ message: err.message, stack: err.stack }, null, 2) : err);
-    latestPosts = fallbackPosts;
+    console.error(
+      "Supabase fetch failed:",
+      err instanceof Error
+        ? JSON.stringify({ message: err.message, stack: err.stack }, null, 2)
+        : err
+    );
   }
 
-  // Fetch series bookshelf data
-  let seriesShelf: { series: string; voice: string | null; latest_episode: string | null; count: number }[] = [];
+  const todayPackage = pickTodayPackage(recentPosts);
+  const mainPost = todayPackage[0] ?? recentPosts[0];
+  const sidePosts = todayPackage.slice(1);
+  const totalMinutes = todayPackage.reduce((sum, post) => sum + readingMinutes(post), 0);
+  const today = new Date().toLocaleDateString("zh-TW", {
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  });
+
+  let seriesShelf: {
+    series: string;
+    voice: string | null;
+    latest_episode: string | null;
+    count: number;
+  }[] = [];
+
   try {
     const { data: allPosts } = await supabase
       .from("posts")
@@ -47,166 +147,194 @@ export default async function HomePage() {
       .order("episode", { ascending: false });
 
     if (allPosts) {
-      const seriesMap = new Map<string, { voice: string | null; latest_episode: string | null; count: number }>();
-      for (const p of allPosts) {
-        if (!seriesMap.has(p.series)) {
-          seriesMap.set(p.series, { voice: p.voice, latest_episode: p.episode, count: 1 });
+      const seriesMap = new Map<
+        string,
+        { voice: string | null; latest_episode: string | null; count: number }
+      >();
+      for (const post of allPosts) {
+        if (!seriesMap.has(post.series)) {
+          seriesMap.set(post.series, {
+            voice: post.voice,
+            latest_episode: post.episode,
+            count: 1,
+          });
         } else {
-          seriesMap.get(p.series)!.count++;
+          seriesMap.get(post.series)!.count++;
         }
       }
-      seriesShelf = Array.from(seriesMap.entries()).map(([series, info]) => ({ series, ...info }));
+      seriesShelf = Array.from(seriesMap.entries()).map(([series, info]) => ({
+        series,
+        ...info,
+      }));
     }
   } catch {}
 
+  const novelShelf = seriesShelf.filter((item) => !columnSeries.has(item.series));
+  const columnShelf = seriesShelf.filter((item) => columnSeries.has(item.series));
+
   return (
     <>
-      {/* Reading Progress Indicator */}
       <div className="fixed top-0 left-0 w-full h-[2px] z-[100]">
         <div className="reading-progress h-full w-1/3" />
       </div>
 
-      {/* TopNavBar */}
       <header className="w-full top-0 sticky z-50 bg-surface-container-low transition-colors duration-300">
         <nav className="flex justify-between items-center px-8 py-4 max-w-screen-2xl mx-auto">
-          <div className="text-2xl font-serif italic text-primary">
+          <Link href="/" className="text-2xl font-serif italic text-primary no-underline">
             kanabi.live
-          </div>
-          <div className="hidden md:flex items-center gap-8">
-            <a
-              className="font-label text-[0.75rem] uppercase font-medium tracking-tight text-primary border-b-2 border-primary-container pb-1"
+          </Link>
+          <div className="hidden lg:flex items-center gap-7">
+            <Link
+              className="font-label text-[0.75rem] uppercase font-medium tracking-tight text-primary border-b-2 border-primary-container pb-1 no-underline"
               href="/"
             >
-              首頁
-            </a>
+              今日
+            </Link>
+            <Link
+              className="font-label text-[0.75rem] uppercase font-medium tracking-tight text-[#5c5957] hover:text-primary transition-colors no-underline"
+              href="/series"
+            >
+              連載
+            </Link>
+            <Link
+              className="font-label text-[0.75rem] uppercase font-medium tracking-tight text-[#5c5957] hover:text-primary transition-colors no-underline"
+              href="/series/%E6%AF%8F%E6%97%A5%E6%96%B0%E8%81%9E"
+            >
+              萬年視角
+            </Link>
+            <Link
+              className="font-label text-[0.75rem] uppercase font-medium tracking-tight text-[#5c5957] hover:text-primary transition-colors no-underline"
+              href="/series/%E8%8D%92%E5%94%90%E6%96%B0%E8%81%9E"
+            >
+              荒唐新聞
+            </Link>
             {ENABLE_AUDIO_FEATURES && (
               <Link
-                className="font-label text-[0.75rem] uppercase font-medium tracking-tight text-[#5c5957] hover:text-primary transition-colors"
+                className="font-label text-[0.75rem] uppercase font-medium tracking-tight text-[#5c5957] hover:text-primary transition-colors no-underline"
                 href="/playlist"
               >
                 我的清單
               </Link>
             )}
           </div>
-          <div className="flex items-center gap-6">
-            <button className="material-symbols-outlined text-primary-container hover:bg-surface-variant/50 p-2 rounded-md transition-all">
+          <div className="flex items-center gap-4">
+            <button
+              aria-label="搜尋"
+              className="material-symbols-outlined text-primary-container hover:bg-surface-variant/50 p-2 rounded-md transition-all"
+            >
               search
             </button>
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30">
-              <img
-                alt="User Profile Avatar"
-                className="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8XwZvxdig0qrdFJg0frNOA3Avv2H3ZYeMHU6NHFDdagL76VOqB5OVBTRQ3gE_RliVDHeMAf2vjKHrr7o82iqYO4u7fyB_1uJI1BNlAmJY_RfOMtTIB_T1dX0lxjrMtf0TJGMouIHOEgUvzBKOzi7VpiyQWzL5NNArGifX5Iw4KeYRowbqaQQACNGRsJkB3OT-N2m1Ss4-6xSOejECruDaqqNt1NWKgiT8x7Rsjc_A-8QjuMQU-fsiTUihaSYQjPujBZEwiG5uOT0"
-              />
-            </div>
           </div>
         </nav>
       </header>
 
-      <main className="max-w-screen-2xl mx-auto pb-32">
-        {/* Hero Section */}
-        <section className="px-8 pt-16 pb-24 md:pt-24 md:pb-32">
-          <div className="max-w-4xl">
-            <p className="font-label text-[0.75rem] uppercase font-semibold tracking-[0.2em] text-on-primary-fixed-variant mb-6">
-              晨曦將至，萬年已過。
-            </p>
-            <h1 className="text-5xl md:text-7xl font-headline text-primary leading-tight mb-8">
-              早安。這是陸沉淵為你準備的今日清單，
-              <span className="italic">更新於清晨 5 點。</span>
-            </h1>
-            <div className="flex flex-wrap gap-4">
-              <button className="bg-primary-container text-on-primary px-8 py-4 rounded-full font-label font-semibold text-sm hover:scale-[0.98] transition-transform">
-                開始閱讀
-              </button>
-              <button className="bg-surface-container-highest text-primary px-8 py-4 rounded-full font-label font-semibold text-sm hover:bg-surface-container-high transition-colors">
-                查看排程
-              </button>
+      <main className="max-w-screen-2xl mx-auto pb-32 overflow-x-hidden">
+        <section className="px-8 pt-10 md:pt-16 pb-16">
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-stretch min-w-0">
+            <div className="xl:col-span-5 flex flex-col justify-between min-h-[520px] py-4 min-w-0">
+              <div>
+                <p className="font-label text-[0.75rem] uppercase font-semibold tracking-[0.2em] text-on-primary-fixed-variant mb-5">
+                  {today}｜清晨 5 點
+                </p>
+                <h1 className="text-4xl sm:text-5xl md:text-7xl font-headline text-primary leading-tight mb-7 max-w-full">
+                  <span className="block">今天的 15 分鐘，</span>
+                  <span className="block">先交給這三篇。</span>
+                </h1>
+                <p className="text-lg sm:text-xl md:text-2xl font-serif text-on-surface-variant leading-relaxed max-w-2xl">
+                  <span className="block">台灣人每天早上必看的內容網站。</span>
+                  <span className="block">不是新聞播報腔，</span>
+                  <span className="block">是一份能帶進早餐店、捷運和辦公桌的晨讀。</span>
+                </p>
+              </div>
+              <div className="mt-10 flex flex-wrap items-center gap-4">
+                {mainPost && !mainPost.id.startsWith("fallback") ? (
+                  <Link
+                    href={`/posts/${mainPost.id}`}
+                    className="inline-flex items-center gap-2 bg-primary text-on-primary px-7 py-3.5 rounded-full font-label font-semibold text-sm no-underline hover:opacity-90 transition-all"
+                  >
+                    <span className="material-symbols-outlined text-lg">wb_twilight</span>
+                    開始今天
+                  </Link>
+                ) : (
+                  <Link
+                    href="/series"
+                    className="inline-flex items-center gap-2 bg-primary text-on-primary px-7 py-3.5 rounded-full font-label font-semibold text-sm no-underline hover:opacity-90 transition-all"
+                  >
+                    <span className="material-symbols-outlined text-lg">wb_twilight</span>
+                    開始今天
+                  </Link>
+                )}
+                <span className="font-label text-sm text-on-surface-variant">
+                  約 {totalMinutes} 分鐘｜{todayPackage.length} 篇
+                </span>
+              </div>
             </div>
-          </div>
-        </section>
 
-        {/* News of the Day (Bento Grid) */}
-        <section className="px-8 mb-32">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <h2 className="text-3xl font-headline text-primary mb-2">
-                今日精選
-              </h2>
-              <p className="text-on-surface-variant font-serif">
-                每日更新，六條連載線同步推進。
-              </p>
-            </div>
-            <Link
-              className="font-label text-xs font-bold text-primary border-b border-primary/20 hover:border-primary pb-1 transition-all no-underline"
-              href="/series"
-            >
-              瀏覽所有故事
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-            {latestPosts && latestPosts.length > 0 ? (
-              <>
-                {/* Main Feature */}
-                <article className="md:col-span-8 bg-surface-container-low rounded-lg p-1 group">
-                  <div className="p-8">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Link
-                        href={`/series/${encodeURIComponent(latestPosts[0].series)}`}
-                        className="font-label text-[10px] font-bold uppercase tracking-widest bg-primary-container text-on-primary px-2 py-1 rounded no-underline hover:opacity-80 transition-opacity"
-                      >
-                        {latestPosts[0].series}
-                      </Link>
-                      {latestPosts[0].episode && (
-                        <span className="font-label text-[10px] font-bold uppercase tracking-widest bg-surface-container-highest text-on-surface-variant px-2 py-1 rounded">
-                          {latestPosts[0].episode}
-                        </span>
-                      )}
-                      <span className="font-label text-xs text-on-surface-variant">
-                        {latestPosts[0].word_count?.toLocaleString()} 字
-                      </span>
-                    </div>
-                    <Link
-                      href={`/posts/${latestPosts[0].id}`}
-                      className="no-underline"
-                    >
-                      <h3 className="text-3xl font-headline text-primary group-hover:underline decoration-primary/30 underline-offset-4 mb-4 cursor-pointer">
-                        {latestPosts[0].title}
-                      </h3>
-                    </Link>
-                    {ENABLE_AUDIO_FEATURES && (
-                      <p className="text-on-surface-variant mb-5">
-                        聲線：{latestPosts[0].voice}
-                      </p>
-                    )}
-                    <div className="flex items-center gap-3">
-                      <Link
-                        href={`/posts/${latestPosts[0].id}`}
-                        className="inline-flex items-center gap-2 bg-primary text-on-primary px-5 py-2.5 rounded-full font-label text-sm font-semibold no-underline hover:opacity-90 transition-all"
-                      >
-                        <span className="material-symbols-outlined text-lg">menu_book</span>
-                        閱讀
-                      </Link>
-                      {ENABLE_AUDIO_FEATURES && (
+            <div className="xl:col-span-7 min-w-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {mainPost && (
+                  <article
+                    className="md:col-span-2 rounded-lg p-7 md:p-9 min-h-[300px] flex flex-col justify-between min-w-0"
+                    style={{
+                      backgroundColor: SERIES_META[mainPost.series]?.color ?? "#012d1d",
+                    }}
+                  >
+                    <div>
+                      <div className="flex flex-wrap items-center gap-3 mb-5">
                         <Link
-                          href={`/posts/${latestPosts[0].id}#listen`}
-                          className="inline-flex items-center gap-2 bg-surface-container-high text-primary px-5 py-2.5 rounded-full font-label text-sm font-semibold no-underline hover:bg-surface-container-highest transition-all"
+                          href={`/series/${encodeURIComponent(mainPost.series)}`}
+                          className="font-label text-[10px] font-bold uppercase tracking-widest bg-white/15 text-white px-2.5 py-1 rounded no-underline hover:bg-white/20 transition-colors"
                         >
-                          <span className="material-symbols-outlined text-lg">headphones</span>
-                          收聽
+                          {mainPost.series}
+                        </Link>
+                        {mainPost.episode && (
+                          <span className="font-label text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white/80 px-2.5 py-1 rounded">
+                            {mainPost.episode}
+                          </span>
+                        )}
+                      </div>
+                      <Link
+                        href={
+                          mainPost.id.startsWith("fallback")
+                            ? "/series"
+                            : `/posts/${mainPost.id}`
+                        }
+                        className="no-underline"
+                      >
+                        <h2 className="text-2xl sm:text-3xl md:text-5xl font-headline text-white leading-tight mb-5 hover:underline decoration-white/30 underline-offset-4 break-all">
+                          {mobileTitleChunks(mainPost).map((chunk, idx) => (
+                            <span key={`${chunk}-${idx}`} className="block sm:inline">
+                              {chunk}
+                            </span>
+                          ))}
+                        </h2>
+                      </Link>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-between gap-4 text-white/80 font-label text-sm">
+                      <span>
+                        {mainPost.word_count?.toLocaleString()} 字｜約{" "}
+                        {readingMinutes(mainPost)} 分鐘
+                      </span>
+                      {!mainPost.id.startsWith("fallback") && (
+                        <Link
+                          href={`/posts/${mainPost.id}`}
+                          className="inline-flex items-center gap-1.5 bg-white text-primary px-4 py-2 rounded-full font-label text-xs font-semibold no-underline hover:opacity-90 transition-all"
+                        >
+                          <span className="material-symbols-outlined text-sm">menu_book</span>
+                          閱讀
                         </Link>
                       )}
                     </div>
-                  </div>
-                </article>
+                  </article>
+                )}
 
-                {/* Side Features */}
-                {latestPosts.slice(1).map((post) => (
+                {sidePosts.map((post, idx) => (
                   <article
-                    key={post.id}
-                    className="md:col-span-4 bg-surface-container-low rounded-lg p-6 group flex flex-col justify-between border border-transparent hover:bg-surface-container-high transition-colors"
+                    key={`${post.id}-${idx}`}
+                    className="bg-surface-container-low rounded-lg p-6 min-h-[220px] flex flex-col justify-between hover:bg-surface-container-high transition-colors min-w-0"
                   >
                     <div>
-                      <div className="flex items-center gap-2 mb-4">
+                      <div className="flex flex-wrap items-center gap-2 mb-4">
                         <Link
                           href={`/series/${encodeURIComponent(post.series)}`}
                           className="font-label text-[10px] font-bold uppercase tracking-widest text-on-primary-fixed-variant no-underline hover:text-primary transition-colors"
@@ -219,107 +347,140 @@ export default async function HomePage() {
                           </span>
                         )}
                       </div>
-                      <Link href={`/posts/${post.id}`} className="no-underline">
-                        <h3 className="text-xl font-headline text-primary mb-3 leading-snug group-hover:underline decoration-primary/30 underline-offset-4 cursor-pointer">
-                          {post.title}
+                      <Link
+                        href={post.id.startsWith("fallback") ? "/series" : `/posts/${post.id}`}
+                        className="no-underline"
+                      >
+                        <h3 className="text-xl sm:text-2xl font-headline text-primary leading-snug mb-4 hover:underline decoration-primary/30 underline-offset-4 break-all">
+                          {displayTitle(post)}
                         </h3>
                       </Link>
-                      <p className="text-on-surface-variant text-sm mb-4">
-                        {ENABLE_AUDIO_FEATURES && post.voice
-                          ? `${post.voice} · `
-                          : ""}
-                        {post.word_count?.toLocaleString()} 字
-                      </p>
-                      <div className="flex items-center gap-2">
+                    </div>
+                    <div className="flex items-center justify-between gap-3 text-xs text-on-surface-variant font-label">
+                      <span>
+                        {post.word_count?.toLocaleString()} 字｜約 {readingMinutes(post)} 分鐘
+                      </span>
+                      {!post.id.startsWith("fallback") && (
                         <Link
                           href={`/posts/${post.id}`}
                           className="inline-flex items-center gap-1.5 bg-primary text-on-primary px-3.5 py-1.5 rounded-full font-label text-xs font-semibold no-underline hover:opacity-90 transition-all"
                         >
-                          <span className="material-symbols-outlined text-sm">menu_book</span>
                           閱讀
                         </Link>
-                        {ENABLE_AUDIO_FEATURES && (
-                          <Link
-                            href={`/posts/${post.id}#listen`}
-                            className="inline-flex items-center gap-1.5 bg-surface-container-highest text-on-surface-variant px-3.5 py-1.5 rounded-full font-label text-xs font-semibold no-underline hover:text-primary transition-all"
-                          >
-                            <span className="material-symbols-outlined text-sm">headphones</span>
-                            收聽
-                          </Link>
-                        )}
-                      </div>
+                      )}
                     </div>
                   </article>
                 ))}
-              </>
-            ) : (
-              <p className="md:col-span-12 text-on-surface-variant">
-                目前沒有已發佈的文章。
-              </p>
-            )}
-          </div>
-        </section>
-
-        {/* Top Novels (Horizontal Scroll — from Supabase) */}
-        <section className="bg-surface-container-low py-24 mb-32">
-          <div className="px-8 max-w-screen-2xl mx-auto mb-8 flex flex-col gap-6">
-            <h2 className="text-3xl font-headline text-primary">熱門小說</h2>
-            <div className="flex flex-wrap gap-2">
-              {seriesShelf.map((s) => (
-                <Link
-                  key={`pill-${s.series}`}
-                  href={`/series/${encodeURIComponent(s.series)}`}
-                  className="px-4 py-2 rounded-full bg-surface-container-highest text-on-surface-variant font-label text-xs font-semibold no-underline hover:bg-primary hover:text-on-primary transition-all"
-                >
-                  {s.series}
-                </Link>
-              ))}
+              </div>
             </div>
           </div>
-          <BookshelfCarousel seriesShelf={seriesShelf} seriesMeta={SERIES_META} />
         </section>
 
+        {columnShelf.length > 0 && (
+          <section className="px-8 mb-20">
+            <div className="flex items-end justify-between mb-8">
+              <div>
+                <h2 className="text-3xl font-headline text-primary mb-2">
+                  晨間專欄
+                </h2>
+                <p className="text-on-surface-variant font-serif">
+                  萬年視角、荒唐新聞、語言觀察，先把今天看清楚一點。
+                </p>
+              </div>
+              <Link
+                className="font-label text-xs font-bold text-primary border-b border-primary/20 hover:border-primary pb-1 transition-all no-underline"
+                href="/series"
+              >
+                所有內容
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {columnShelf.map((item) => {
+                const meta = SERIES_META[item.series];
+                return (
+                  <Link
+                    key={`column-${item.series}`}
+                    href={`/series/${encodeURIComponent(item.series)}`}
+                    className="group bg-surface-container-low rounded-lg p-6 no-underline hover:bg-surface-container-high transition-colors"
+                  >
+                    <span
+                      className="inline-block w-3 h-3 rounded-full mb-5"
+                      style={{ backgroundColor: meta?.color ?? "#012d1d" }}
+                    />
+                    <h3 className="text-2xl font-headline text-primary mb-3 group-hover:underline decoration-primary/30 underline-offset-4">
+                      {item.series}
+                    </h3>
+                    <p className="text-on-surface-variant font-serif text-sm leading-relaxed mb-5">
+                      {meta?.desc}
+                    </p>
+                    <span className="font-label text-xs text-on-surface-variant">
+                      {item.count} 篇｜最新 {item.latest_episode}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        <section className="bg-surface-container-low py-20 mb-24">
+          <div className="px-8 max-w-screen-2xl mx-auto mb-8 flex flex-col gap-6">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5">
+              <div>
+                <h2 className="text-3xl font-headline text-primary mb-2">
+                  連載書架
+                </h2>
+                <p className="text-on-surface-variant font-serif">
+                  六條活躍連載，今日讀完，晚上還會惦記。
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {novelShelf.map((item) => (
+                  <Link
+                    key={`pill-${item.series}`}
+                    href={`/series/${encodeURIComponent(item.series)}`}
+                    className="px-4 py-2 rounded-full bg-surface-container-highest text-on-surface-variant font-label text-xs font-semibold no-underline hover:bg-primary hover:text-on-primary transition-all"
+                  >
+                    {item.series}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+          <BookshelfCarousel seriesShelf={novelShelf} seriesMeta={SERIES_META} />
+        </section>
       </main>
 
-      {/* Footer */}
       <footer className="bg-surface-container-low w-full py-12 px-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto">
           <div className="font-serif text-lg text-primary-container">
             kanabi.live
           </div>
           <div className="flex flex-wrap justify-center gap-8">
-            <a
-              className="font-label text-xs text-[#5c5957] hover:text-primary transition-all"
-              href="#"
+            <Link
+              className="font-label text-xs text-[#5c5957] hover:text-primary transition-all no-underline"
+              href="/series/%E6%AF%8F%E6%97%A5%E6%96%B0%E8%81%9E"
             >
-              隱私權政策
-            </a>
-            <a
-              className="font-label text-xs text-[#5c5957] hover:text-primary transition-all"
-              href="#"
+              每日新聞
+            </Link>
+            <Link
+              className="font-label text-xs text-[#5c5957] hover:text-primary transition-all no-underline"
+              href="/series/%E8%8D%92%E5%94%90%E6%96%B0%E8%81%9E"
             >
-              使用條款
-            </a>
-            <a
-              className="font-label text-xs text-[#5c5957] hover:text-primary transition-all"
-              href="#"
+              荒唐新聞
+            </Link>
+            <Link
+              className="font-label text-xs text-[#5c5957] hover:text-primary transition-all no-underline"
+              href="/series"
             >
-              編輯方針
-            </a>
-            <a
-              className="font-label text-xs text-[#5c5957] hover:text-primary transition-all"
-              href="#"
-            >
-              客戶支援
-            </a>
+              連載書架
+            </Link>
           </div>
           <p className="font-label text-xs text-[#5c5957]">
             © 2026 Kelu AI 內容工廠
           </p>
         </div>
       </footer>
-
-      {/* GlobalPlayer is rendered in layout.tsx */}
     </>
   );
 }

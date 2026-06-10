@@ -61,8 +61,10 @@ export function QueueProvider({ children }: { children: ReactNode }) {
 
   // Load from localStorage on mount
   useEffect(() => {
-    setState(loadFromStorage());
-    mounted.current = true;
+    window.setTimeout(() => {
+      setState(loadFromStorage());
+      mounted.current = true;
+    }, 0);
   }, []);
 
   // Persist to localStorage

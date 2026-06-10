@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { readFileSync, existsSync } from 'fs'
+import { readFileSync, existsSync, readdirSync } from 'fs'
 import { resolve } from 'path'
 
 const supabase = createClient(
@@ -17,6 +17,17 @@ const seriesMap: Record<string, { series: string; voice: string }> = {
   '05_我直播的不是靈異': { series: '我直播的不是靈異', voice: '簡瑞麒' },
   '燼光_CINERIS':        { series: '燼光 CINERIS',    voice: '陸沉淵' },
   '06_鯤島淵界':         { series: '鯤島淵界',        voice: '陸沉淵' },
+}
+
+type PostInsert = {
+  title: string
+  content: string
+  series: string
+  episode: string
+  voice: string
+  word_count: number
+  status: 'published'
+  published_at: string
 }
 
 function extractTitle(raw: string, fallback: string): string {
@@ -57,15 +68,14 @@ async function main() {
   console.log(`Supabase 目前有 ${existingSet.size} 篇文章\n`)
 
   // 2. Scan local files, find missing ones
-  const rows: any[] = []
+  const rows: PostInsert[] = []
 
   for (const [folder, meta] of Object.entries(seriesMap)) {
     const s01Dir = resolve(NOVELS_DIR, folder, 'S01')
     if (!existsSync(s01Dir)) continue
 
     // Find all E*.md files
-    const files = require('fs')
-      .readdirSync(s01Dir)
+    const files = readdirSync(s01Dir)
       .filter((f: string) => /^E\d+\.md$/.test(f))
       .sort()
 

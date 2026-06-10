@@ -35,6 +35,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
   const voice = posts?.[0]?.voice ?? null;
   const totalWords =
     posts?.reduce((sum, p) => sum + (p.word_count ?? 0), 0) ?? 0;
+  const isColumn = meta?.kind === "column";
 
   return (
     <>
@@ -97,7 +98,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
           {/* Info */}
           <div className="flex-1 flex flex-col justify-end">
             <span className="font-label text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">
-              連載小說
+              {isColumn ? "內容專欄" : "連載小說"}
             </span>
             <h1 className="text-4xl md:text-5xl font-headline text-primary leading-tight mb-4">
               {seriesName}
@@ -120,7 +121,8 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
                 <span className="material-symbols-outlined text-base">
                   menu_book
                 </span>
-                {posts?.length ?? 0} / {meta?.totalChapters ?? "?"} 章
+                {posts?.length ?? 0} / {meta?.totalChapters ?? "?"}{" "}
+                {isColumn ? "篇" : "章"}
               </span>
               <span className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-base">
@@ -135,7 +137,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
         {/* Chapter list */}
         <section>
           <h2 className="text-2xl font-headline text-primary mb-8">
-            所有章節
+            {isColumn ? "所有文章" : "所有章節"}
           </h2>
           <div className="space-y-3">
             {posts && posts.length > 0 ? (

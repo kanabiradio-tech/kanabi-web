@@ -7,7 +7,7 @@ import { SERIES_META } from "@/src/lib/series-meta";
 import { ENABLE_AUDIO_FEATURES } from "@/src/lib/features";
 
 export const metadata: Metadata = {
-  title: "所有故事 - kanabi.live",
+  title: "所有內容 - kanabi.live",
 };
 
 export default async function AllSeriesPage() {
@@ -61,7 +61,7 @@ export default async function AllSeriesPage() {
               首頁
             </Link>
             <span className="text-primary font-label text-[0.75rem] font-medium tracking-tight uppercase border-b-2 border-primary-container pb-1">
-              所有故事
+              所有內容
             </span>
             {ENABLE_AUDIO_FEATURES && (
               <Link
@@ -77,15 +77,16 @@ export default async function AllSeriesPage() {
 
       <main className="max-w-5xl mx-auto px-8 py-12 pb-32">
         <h1 className="text-4xl md:text-5xl font-headline text-primary mb-4">
-          所有故事
+          所有內容
         </h1>
         <p className="text-on-surface-variant font-serif text-lg mb-12">
-          六條連載線，同一座台北，不同的深夜。
+          今日晨讀、專欄與六條連載，都在這裡。
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {seriesList.map((s) => {
             const meta = SERIES_META[s.series];
+            const isColumn = meta?.kind === "column";
             return (
               <Link
                 key={s.series}
@@ -127,7 +128,8 @@ export default async function AllSeriesPage() {
                   )}
                   <span className="flex items-center gap-1">
                     <span className="material-symbols-outlined text-xs">menu_book</span>
-                    {s.count} / {meta?.totalChapters ?? "?"} 章
+                    {s.count} / {meta?.totalChapters ?? "?"}{" "}
+                    {isColumn ? "篇" : "章"}
                   </span>
                   <span className="flex items-center gap-1">
                     <span className="material-symbols-outlined text-xs">article</span>
