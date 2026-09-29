@@ -1,0 +1,10 @@
+import Image from "next/image";
+import Link from "next/link";
+import SiteHeader from "@/src/components/SiteHeader";
+import SiteFooter from "@/src/components/SiteFooter";
+import JsonLd from "@/src/components/JsonLd";
+import { PORTRAIT, SOCIAL_LINKS, SITE_URL, pageMetadata } from "@/src/lib/life";
+export const metadata = pageMetadata("關於沈以晨", "喜歡吃東西、亂走，小事也能笑很久。認識 Kanabi 原創虛擬角色沈以晨，以及她的生活紀錄。", "/about");
+export default function AboutPage() {
+ return <div className="journal"><SiteHeader active="about" /><main id="main-content" className="content-width about-main"><JsonLd data={{ "@context": "https://schema.org", "@type": "ProfilePage", url: `${SITE_URL}/about`, mainEntity: { "@type": "Person", name: "沈以晨", description: "Kanabi 原創虛擬角色，也是《燼光 CINERIS》女主角。", image: `${SITE_URL}${PORTRAIT}`, sameAs: SOCIAL_LINKS.map(link => link.href) } }} /><div className="about-grid"><figure><Image src={PORTRAIT} alt="沈以晨的自然笑容與玻璃碎片項鍊" width={1086} height={1448} sizes="(max-width: 720px) 90vw, 40vw" preload /><figcaption>沈以晨・Kanabi 原創角色形象</figcaption></figure><div className="about-copy"><p className="eyebrow">HELLO, I’M YI-CHEN</p><h1>我是沈以晨。<br />很高興你來。</h1><p>住台北，喜歡吃東西、亂走，做一點內容與視覺相關的接案工作。</p><p>有點路痴，常常高估自己的胃。相簿裡有很多照片，地圖裡有更多存了還沒去的地方。</p><p>不太喜歡把日子排得太滿。路上有貓就停一下，好吃的東西慢慢吃。沒什麼大事，也可以很開心。</p><dl className="character-facts"><div><dt>出發地</dt><dd>台北</dd></div><div><dt>身高設定</dt><dd>168 cm</dd></div><div><dt>隨身小物</dt><dd>玻璃碎片項鍊</dd></div></dl><div className="about-socials">{SOCIAL_LINKS.map(link => <a className="text-link" key={link.label} href={link.href} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div></div></div><section className="about-disclosure"><p className="eyebrow">ABOUT THIS LITTLE WORLD</p><h2>生活是真的，故事也在這裡。</h2><p>沈以晨是 Kanabi 的原創虛擬角色，也是《燼光 CINERIS》的女主角。這個部落格以她的個性與聲音，記錄創作者帶回來的日常。</p><p>店家、食物、街景與旅行素材，來自創作者的實地拍攝與真實心得。部分照片會加入沈以晨的合成人物，並在文章中說明。角色形象照則屬於角色創作，不代表一次實際造訪。</p><p>喜歡與不喜歡，都會照實整理；如有招待或合作，也會清楚標示。</p><Link className="text-link" href={`/series/${encodeURIComponent("燼光 CINERIS")}`}>在故事裡認識以晨 ↗</Link></section></main><SiteFooter /></div>;
+}

@@ -1,6 +1,8 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
+import SiteHeader from "@/src/components/SiteHeader";
+import SiteFooter from "@/src/components/SiteFooter";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { supabase } from "@/src/lib/supabase";
@@ -76,39 +78,9 @@ export default async function PostPage({ params }: PostPageProps) {
   return (
     <>
       {/* TopNavBar */}
-      <header className="w-full top-0 sticky z-40 bg-surface transition-colors duration-300">
-        <nav className="flex justify-between items-center px-8 py-4 max-w-screen-2xl mx-auto">
-          <Link
-            href="/"
-            className="text-2xl font-serif italic text-primary no-underline"
-          >
-            kanabi.live
-          </Link>
-          <div className="hidden md:flex items-center gap-8">
-            <Link
-              className="text-[#5c5957] hover:text-primary transition-colors font-label text-[0.75rem] font-medium tracking-tight uppercase no-underline"
-              href="/"
-            >
-              首頁
-            </Link>
-            {ENABLE_AUDIO_FEATURES && (
-              <Link
-                className="text-[#5c5957] hover:text-primary transition-colors font-label text-[0.75rem] font-medium tracking-tight uppercase no-underline"
-                href="/playlist"
-              >
-                我的清單
-              </Link>
-            )}
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">
-              search
-            </button>
-          </div>
-        </nav>
-      </header>
+      <SiteHeader active="stories" />
 
-      <main className="max-w-3xl mx-auto px-8 py-12 pb-32">
+      <main id="main-content" className="max-w-3xl mx-auto px-8 py-12 pb-32">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-on-surface-variant font-label text-sm mb-8">
           <Link
@@ -242,16 +214,7 @@ export default async function PostPage({ params }: PostPageProps) {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-12 px-8 bg-surface-container-low">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto">
-          <div className="font-serif text-lg text-primary-container">
-            kanabi.live
-          </div>
-          <p className="text-[#5c5957] font-label text-xs italic">
-            © 2026 Kelu AI 內容工廠
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   );
 }

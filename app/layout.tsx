@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Serif_TC, Inter } from "next/font/google";
 import "./globals.css";
+import "./journal.css";
 import { QueueProvider } from "@/src/components/QueueProvider";
 import GlobalPlayer from "@/src/components/GlobalPlayer";
 import { ENABLE_AUDIO_FEATURES } from "@/src/lib/features";
@@ -19,8 +20,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "kanabi.live - 晨曦將至，萬年已過。",
-  description: "kanabi.live 為你策展每日晨讀",
+  metadataBase: new URL("https://www.kanabi.live"),
+  title: "Kanabi｜沈以晨的日常與故事",
+  description: "跟著沈以晨吃東西、去旅行、散散步。在 Kanabi，把生活慢慢寫成故事。",
 };
 
 export default function RootLayout({
