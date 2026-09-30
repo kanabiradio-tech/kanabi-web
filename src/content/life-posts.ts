@@ -81,8 +81,8 @@ export const lifePosts: LifePost[] = [{
     "小事"
   ],
   "cover": {
-    "src": "/images/yichen/keep-little-things-v1.png",
-    "alt": "沈以晨穿深藍襯衫坐在窗邊桌前，一手拿著手機，抬頭自然地笑；桌上放著筆記本。AI 角色情境創作。",
+    "src": "/images/yichen/keep-little-things-v2.png",
+    "alt": "沈以晨穿深藍襯衫坐在窗邊，低頭側臉看手機，閉唇淡笑，雙手操作手機。AI 角色情境創作。",
     "caption": "沈以晨・角色形象創作",
     "width": 1122,
     "height": 1402,
@@ -151,7 +151,7 @@ export const lifePosts: LifePost[] = [{
     "kind": "character-opinion",
     "notes": "依使用者 2026-09-30「請發布」授權發布。角色觀點，無真實實訪宣稱。",
     "photoReferences": [
-      "人物設定/營運排程/2026-09-30_早班/keep-little-things-v1.png"
+      "人物設定/營運排程/2026-09-30_早班/keep-little-things-v2.png"
     ],
     "reviewed": true
   }
