@@ -81,14 +81,14 @@ export const lifePosts: LifePost[] = [{
     "小事"
   ],
   "cover": {
-    "src": "/images/yichen/portrait.png",
-    "alt": "沈以晨穿著白色上衣，戴著玻璃碎片項鍊，自然開心地笑著",
+    "src": "/images/yichen/keep-little-things-v1.png",
+    "alt": "沈以晨穿深藍襯衫坐在窗邊桌前，一手拿著手機，抬頭自然地笑；桌上放著筆記本。AI 角色情境創作。",
     "caption": "沈以晨・角色形象創作",
-    "width": 1086,
-    "height": 1448,
+    "width": 1122,
+    "height": 1402,
     "kind": "character"
   },
-  "disclosure": "沈以晨是 Kanabi 原創虛擬角色。本篇為角色觀點創作，非實訪紀錄。 圖片為角色形象創作。",
+  "disclosure": "沈以晨是 Kanabi 原創虛擬角色。本篇為角色觀點創作，非實訪紀錄。 圖片為 AI 角色情境創作，非真實拍攝紀錄。",
   "blocks": [
     {
       "type": "paragraph",
@@ -151,7 +151,7 @@ export const lifePosts: LifePost[] = [{
     "kind": "character-opinion",
     "notes": "依使用者 2026-09-30「請發布」授權發布。角色觀點，無真實實訪宣稱。",
     "photoReferences": [
-      "人物設定/images/01_identity_master.png"
+      "人物設定/營運排程/2026-09-30_早班/keep-little-things-v1.png"
     ],
     "reviewed": true
   }
