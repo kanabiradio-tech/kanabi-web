@@ -7,5 +7,5 @@ export type LifePost = {
   characterId: "shen-yichen"; tags: string[]; cover: LifePhoto;
   place?: { name: string; area: string; visitedAt: string };
   disclosure: string; blocks: LifeBlock[];
-  source: { kind: "character-introduction" | "field-visit"; notes: string; photoReferences: string[]; reviewed: boolean };
+  source: { kind: "character-introduction" | "character-opinion" | "field-visit"; notes: string; photoReferences: string[]; reviewed: boolean };
 };

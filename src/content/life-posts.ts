@@ -67,4 +67,92 @@ export const lifePosts: LifePost[] = [{
     }
 ],
   source: { kind: "character-introduction", notes: "依正式人物與寫作設定撰寫；不包含任何實訪、店家或消費經驗。", photoReferences: ["人物設定/images/01_identity_master.png"], reviewed: true },
+}, {
+  "slug": "keep-these-little-things",
+  "title": "先不要刪，我還想記得",
+  "excerpt": "照片、截圖、沒想完的念頭。先留著，過幾天還想講，就講。",
+  "category": "diary",
+  "status": "published",
+  "publishedAt": "2026-09-30T12:24:10.482584+08:00",
+  "characterId": "shen-yichen",
+  "tags": [
+    "沈以晨",
+    "日常",
+    "小事"
+  ],
+  "cover": {
+    "src": "/images/yichen/portrait.png",
+    "alt": "沈以晨穿著白色上衣，戴著玻璃碎片項鍊，自然開心地笑著",
+    "caption": "沈以晨・角色形象創作",
+    "width": 1086,
+    "height": 1448,
+    "kind": "character"
+  },
+  "disclosure": "沈以晨是 Kanabi 原創虛擬角色。本篇為角色觀點創作，非實訪紀錄。 圖片為角色形象創作。",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "如果要替我的相簿寫一句介紹，大概是：東西都在，找不找得到再說。"
+    },
+    {
+      "type": "paragraph",
+      "text": "照片、截圖、想去的地方，存的時候每一個都很有道理。等到真的要找，才發現「我記得我有存」是一句毫無幫助的話。"
+    },
+    {
+      "type": "paragraph",
+      "text": "所以我想在這裡留一點比較找得到的東西。不用整理得多厲害，至少下次想起來，不用往上滑到手痠。"
+    },
+    {
+      "type": "paragraph",
+      "text": "第一種，是我喜歡，但不一定說得很完整的細節。"
+    },
+    {
+      "type": "paragraph",
+      "text": "比起只留一句「很好吃」，我比較想記得自己喜歡哪一口。是邊邊、醬，還是熱的時候那個味道？也可能吃完只剩一句「嗯，下次還想吃」。那就先寫這句，不要硬湊五個形容詞。等真的吃過，再慢慢說。"
+    },
+    {
+      "type": "paragraph",
+      "text": "第二種，是計畫外面的小事。"
+    },
+    {
+      "type": "paragraph",
+      "text": "如果出門本來只想買一樣東西，卻在路上看到什麼捨不得走，我想把那段也留下來。它可能完全不適合排進行程表。沒關係，我的行程表本來也沒有那麼大的權力。"
+    },
+    {
+      "type": "paragraph",
+      "text": "但想去跟去過要分開。收藏一百個地方，不代表腳已經走了一百次。這件事我要先替我的腳澄清。"
+    },
+    {
+      "type": "paragraph",
+      "text": "第三種，是還沒決定的東西。"
+    },
+    {
+      "type": "paragraph",
+      "text": "有些照片不漂亮，有些話寫到一半，有些地方看了介紹很想去，又覺得好遠。它們不一定會變成文章，我也不想先替它們找一個很有意義的理由。"
+    },
+    {
+      "type": "paragraph",
+      "text": "先留著。過幾天還想講，就講。"
+    },
+    {
+      "type": "paragraph",
+      "text": "我知道這個方法聽起來很像「整理失敗，換個說法」。有一點。但至少我開始分得出來，哪些是想留給自己，哪些是想拿來給你看。"
+    },
+    {
+      "type": "paragraph",
+      "text": "以後這裡大概會長成這樣：有吃過才寫的東西，有走過才說的路，也有一點還沒想完的念頭。你不用每次都得到什麼；偶爾看到一段，覺得「我也是」，我就會很開心。"
+    },
+    {
+      "type": "paragraph",
+      "text": "至於相簿，先不要催。我有在想了。"
+    }
+  ],
+  "source": {
+    "kind": "character-opinion",
+    "notes": "依使用者 2026-09-30「請發布」授權發布。角色觀點，無真實實訪宣稱。",
+    "photoReferences": [
+      "人物設定/images/01_identity_master.png"
+    ],
+    "reviewed": true
+  }
 }];
