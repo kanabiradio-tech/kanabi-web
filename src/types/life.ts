@@ -1,6 +1,6 @@
 export type LifeCategory = "food" | "travel" | "walk" | "diary";
 export type LifePhoto = { src: string; alt: string; caption: string; width: number; height: number; kind: "original" | "composite" | "character" };
-export type LifeBlock = { type: "paragraph" | "heading" | "quote"; text: string } | { type: "photo"; photo: LifePhoto };
+export type LifeBlock = { type: "paragraph" | "heading" | "quote"; text: string } | { type: "photo"; photo: LifePhoto } | { type: "link"; text: string; href: string };
 export type LifePost = {
   slug: string; title: string; excerpt: string; category: LifeCategory;
   status: "draft" | "published"; publishedAt?: string; updatedAt?: string;
