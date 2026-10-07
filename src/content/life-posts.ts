@@ -214,22 +214,22 @@ export const lifePosts: LifePost[] = [{
     {
       "type": "photo",
       "photo": {
-        "src": "/images/yichen/jinguashi-20261002/16_douhua_front.jpg",
+        "src": "/images/yichen/jinguashi-20261002/16_douhua_front-oriented.jpg",
         "alt": "走在階梯上，先被「山頂豆花」四個字攔下來。",
         "caption": "走在階梯上，先被「山頂豆花」四個字攔下來。",
-        "width": 5712,
-        "height": 4284,
+        "width": 4284,
+        "height": 5712,
         "kind": "original"
       }
     },
     {
       "type": "photo",
       "photo": {
-        "src": "/images/yichen/jinguashi-20261002/17_douhua_inside.jpg",
+        "src": "/images/yichen/jinguashi-20261002/17_douhua_inside-oriented.jpg",
         "alt": "櫃檯、座位，還有窗外的山。這個休息站很會選位置。",
         "caption": "櫃檯、座位，還有窗外的山。這個休息站很會選位置。",
-        "width": 5712,
-        "height": 4284,
+        "width": 4284,
+        "height": 5712,
         "kind": "original"
       }
     },
@@ -271,11 +271,11 @@ export const lifePosts: LifePost[] = [{
     {
       "type": "photo",
       "photo": {
-        "src": "/images/yichen/jinguashi-20261002/03_mountain_and_sea.jpg",
+        "src": "/images/yichen/jinguashi-20261002/03_mountain_and_sea-oriented.jpg",
         "alt": "山一層、海一層，這張先不放人。",
         "caption": "山一層、海一層，這張先不放人。",
-        "width": 5712,
-        "height": 4284,
+        "width": 4284,
+        "height": 5712,
         "kind": "original"
       }
     },
@@ -324,22 +324,22 @@ export const lifePosts: LifePost[] = [{
     {
       "type": "photo",
       "photo": {
-        "src": "/images/yichen/jinguashi-20261002/05_small_flowers.jpg",
+        "src": "/images/yichen/jinguashi-20261002/05_small_flowers-oriented.jpg",
         "alt": "路邊的小紫花。大景之外，也留一張小小的。",
         "caption": "路邊的小紫花。大景之外，也留一張小小的。",
-        "width": 5712,
-        "height": 4284,
+        "width": 4284,
+        "height": 5712,
         "kind": "original"
       }
     },
     {
       "type": "photo",
       "photo": {
-        "src": "/images/yichen/jinguashi-20261002/06_torii_approach.jpg",
+        "src": "/images/yichen/jinguashi-20261002/06_torii_approach-oriented.jpg",
         "alt": "從石階往上看，鳥居就在樹之間。",
         "caption": "從石階往上看，鳥居就在樹之間。",
-        "width": 5712,
-        "height": 4284,
+        "width": 4284,
+        "height": 5712,
         "kind": "original"
       }
     },
@@ -443,11 +443,11 @@ export const lifePosts: LifePost[] = [{
     {
       "type": "photo",
       "photo": {
-        "src": "/images/yichen/jinguashi-20261002/09_cat.jpg",
+        "src": "/images/yichen/jinguashi-20261002/09_cat-oriented.jpg",
         "alt": "店門口的橘白貓，牠忙牠的，我們留點空間。",
         "caption": "店門口的橘白貓，牠忙牠的，我們留點空間。",
-        "width": 5712,
-        "height": 4284,
+        "width": 4284,
+        "height": 5712,
         "kind": "original"
       }
     },
@@ -481,22 +481,22 @@ export const lifePosts: LifePost[] = [{
     {
       "type": "photo",
       "photo": {
-        "src": "/images/yichen/jinguashi-20261002/10_heart_outside.jpg",
+        "src": "/images/yichen/jinguashi-20261002/10_heart_outside-oriented.jpg",
         "alt": "從外面看心形坑道，洞口藏在綠色裡。",
         "caption": "從外面看心形坑道，洞口藏在綠色裡。",
-        "width": 5712,
-        "height": 4284,
+        "width": 4284,
+        "height": 5712,
         "kind": "original"
       }
     },
     {
       "type": "photo",
       "photo": {
-        "src": "/images/yichen/jinguashi-20261002/11_heart_inside.jpg",
+        "src": "/images/yichen/jinguashi-20261002/11_heart_inside-oriented.jpg",
         "alt": "從裡面回頭看，心形變亮了。",
         "caption": "從裡面回頭看，心形變亮了。",
-        "width": 5712,
-        "height": 4284,
+        "width": 4284,
+        "height": 5712,
         "kind": "original"
       }
     },
