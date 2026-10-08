@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Private editorial and local agent material
+/人物設定/
+/.claude/
+/CLAUDE.md

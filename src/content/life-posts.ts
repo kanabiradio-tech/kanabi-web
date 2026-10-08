@@ -1,3 +1,4 @@
+import 'server-only';
 import type { LifePost } from "@/src/types/life";
 
 // Keep source notes internal. Only reviewed, published entries appear on the website.

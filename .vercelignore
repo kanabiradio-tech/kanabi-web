@@ -1,0 +1,10 @@
+
+# Private editorial and local agent material
+/人物設定/
+/.claude/
+/CLAUDE.md
+/scripts/
+/supabase/
+/docs/
+/tests/
+.env*

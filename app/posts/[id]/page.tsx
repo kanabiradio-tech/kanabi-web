@@ -22,6 +22,8 @@ export async function generateMetadata({
     .from("posts")
     .select("title, series")
     .eq("id", id)
+    .eq("status", "published")
+    .lte("published_at", new Date().toISOString())
     .single();
   return { title: data ? `${data.title} - kanabi.live` : "文章不存在" };
 }
@@ -35,6 +37,8 @@ export default async function PostPage({ params }: PostPageProps) {
       "id, title, content, series, episode, voice, word_count, audio_url, published_at, created_at"
     )
     .eq("id", id)
+    .eq("status", "published")
+    .lte("published_at", new Date().toISOString())
     .single();
 
   if (error || !post) notFound();
